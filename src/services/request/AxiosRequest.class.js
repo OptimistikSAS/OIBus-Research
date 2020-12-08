@@ -1,5 +1,6 @@
 const axios = require('axios').default
 const tunnel = require('tunnel')
+const zlib = require('zlib')
 
 const BaseRequest = require('./BaseRequest.class')
 
@@ -57,7 +58,11 @@ class AxiosRequest extends BaseRequest {
 
     let body
     if (Object.prototype.hasOwnProperty.call(headers, 'Content-Type')) {
-      body = data
+      if (Object.prototype.hasOwnProperty.call(headers, 'Content-Encoding')) {
+        body = zlib.gzipSync(data)
+      } else {
+        body = data
+      }
     } else {
       body = this.generateFormDataBody(data)
 

@@ -1996,6 +1996,9 @@ exports[`NorthForm check NorthForm with application: RawFileSender 1`] = `
                       Fill the encoded user and password in OIBus
                     </li>
                   </ul>
+                  <p>
+                    When compressed is checked values will be sent gzip-ed
+                  </p>
                 </div>
               </div>
             </div>
@@ -2048,6 +2051,13 @@ exports[`NorthForm check NorthForm with application: RawFileSender 1`] = `
             />
           </div>
         </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-4"
+        />
       </div>
       <div
         class="row"
@@ -6983,6 +6993,9 @@ exports[`NorthForm check NorthForm with application: monoiconnect 1`] = `
                   <p>
                     Endpoint for OIAnalytics is /api/optimistik/oibus/data/time_values
                   </p>
+                  <p>
+                    When compressed is checked values will be sent gzip-ed
+                  </p>
                 </div>
               </div>
             </div>
@@ -7067,6 +7080,13 @@ exports[`NorthForm check NorthForm with application: monoiconnect 1`] = `
             />
           </div>
         </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-4"
+        />
       </div>
       <div
         class="row"

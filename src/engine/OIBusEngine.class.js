@@ -104,7 +104,7 @@ class OIBusEngine extends BaseEngine {
    * @return {Promise<number>} - The sent status
    */
   async handleValuesFromCache(id, values) {
-    this.logger.trace(`handleValuesFromCache() call with "${this.activeApis[id]?.application.name || id}" and ${values.length} values`)
+    this.logger.trace(`handleValuesFromCache() call for "${this.activeApis[id]?.application.name || id}" with ${values.length} values`)
 
     let status
     try {
@@ -123,7 +123,7 @@ class OIBusEngine extends BaseEngine {
    * @return {Promise<number>} - The sent status
    */
   async sendFile(id, filePath) {
-    this.logger.trace(`Engine sendFile() call with "${this.activeApis[id]?.application.name || id}" and ${filePath}`)
+    this.logger.trace(`Engine sendFile() call for "${this.activeApis[id]?.application.name || id}" with ${filePath}`)
 
     let status
     try {

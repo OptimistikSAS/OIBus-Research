@@ -23,13 +23,16 @@ class OIAnalytics extends ApiHandler {
 
     const {
       host,
+      compressed,
       authentication,
       proxy,
     } = applicationParameters.OIAnalytics
+
     this.valuesUrl = `${host}${valuesEndpoint}${queryParam}`
     this.fileUrl = `${host}${fileEndpoint}${queryParam}`
     this.authentication = authentication
     this.proxy = this.getProxy(proxy)
+    this.compressed = compressed
 
     this.canHandleValues = true
     this.canHandleFiles = true

@@ -26,6 +26,7 @@ schema.form = {
           <img src={userpass} alt="user password" style={{ width: '300px' }} />
           <li>Fill the encoded user and password in OIBus</li>
         </ul>
+        <p>When compressed is checked values will be sent gzip-ed</p>
       </>
     ),
   },
@@ -38,6 +39,12 @@ schema.form = {
     type: 'OIbLink',
     valid: combinedValidations([notEmpty('Host'), startsWith('http', 'Host')]),
     defaultValue: '',
+  },
+  compressed: {
+    type: 'OIbCheckBox',
+    label: 'Compressed',
+    help: <p>Send values compressed</p>,
+    defaultValue: false,
   },
   authentication: { type: 'OIbAuthentication' },
   networkSection: {

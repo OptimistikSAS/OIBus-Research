@@ -28,7 +28,7 @@ describe('OIConnect', () => {
     expect(oiConnect.canHandleFiles).toBeTruthy()
   })
 
-  it('should properly handle values in non verbose mode', async () => {
+  it('should properly handle values without compression', async () => {
     const values = [
       {
         pointId: 'pointId',
@@ -36,6 +36,7 @@ describe('OIConnect', () => {
         data: { value: 666, quality: 'good' },
       },
     ]
+    oiConnect.compressed = false
     await oiConnect.handleValues(values)
 
     const expectedUrl = 'http://hostname:2223/addValues?name=OIBus:monoiconnect'
@@ -43,6 +44,27 @@ describe('OIConnect', () => {
     const expectedBody = JSON.stringify(values)
     const expectedHeaders = { 'Content-Type': 'application/json' }
 
+    expect(engine.requestService.httpSend).toHaveBeenCalledWith(expectedUrl, 'POST', expectedAuthentication, null, expectedBody, expectedHeaders)
+  })
+
+  it('should properly handle values with compression', async () => {
+    const values = [
+      {
+        pointId: 'pointId',
+        timestamp,
+        data: { value: 666, quality: 'good' },
+      },
+    ]
+    oiConnect.compressed = true
+    await oiConnect.handleValues(values)
+
+    const expectedUrl = 'http://hostname:2223/addValues?name=OIBus:monoiconnect'
+    const expectedAuthentication = config.north.applications[1].OIConnect.authentication
+    const expectedBody = JSON.stringify(values)
+    const expectedHeaders = {
+      'Content-Type': 'application/json',
+      'Content-Encoding': 'gzip',
+    }
     expect(engine.requestService.httpSend).toHaveBeenCalledWith(expectedUrl, 'POST', expectedAuthentication, null, expectedBody, expectedHeaders)
   })
 

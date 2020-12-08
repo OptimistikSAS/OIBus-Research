@@ -1,7 +1,7 @@
 const url = require('url')
-
 const fetch = require('node-fetch')
 const ProxyAgent = require('proxy-agent')
+const zlib = require('zlib')
 
 const BaseRequest = require('./BaseRequest.class')
 
@@ -37,7 +37,11 @@ class FetchRequest extends BaseRequest {
 
     let body
     if (Object.prototype.hasOwnProperty.call(headers, 'Content-Type')) {
-      body = data
+      if (Object.prototype.hasOwnProperty.call(headers, 'Content-Encoding')) {
+        body = zlib.gzipSync(data)
+      } else {
+        body = data
+      }
     } else {
       body = this.generateFormDataBody(data)
 

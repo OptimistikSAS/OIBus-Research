@@ -28,7 +28,7 @@ describe('OIAnalytics', () => {
     expect(oiAnalytics.canHandleFiles).toBeTruthy()
   })
 
-  it('should properly handle values', async () => {
+  it('should properly handle values without compression', async () => {
     const values = [
       {
         pointId: 'pointId',
@@ -37,6 +37,7 @@ describe('OIAnalytics', () => {
         name: 'South',
       },
     ]
+    oiAnalytics.compressed = false
     await oiAnalytics.handleValues(values)
 
     const expectedUrl = `${oiAnalyticsConfig.OIAnalytics.host}/api/oianalytics/oibus/time-values?dataSourceId=${oiAnalyticsConfig.name}`
@@ -47,6 +48,32 @@ describe('OIAnalytics', () => {
       pointId: value.pointId,
     })))
     const expectedHeaders = { 'Content-Type': 'application/json' }
+    expect(engine.requestService.httpSend).toHaveBeenCalledWith(expectedUrl, 'POST', expectedAuthentication, null, expectedBody, expectedHeaders)
+  })
+
+  it('should properly handle values with compression', async () => {
+    const values = [
+      {
+        pointId: 'pointId',
+        timestamp,
+        data: { value: 666, quality: 'good' },
+        dataSourceId: 'South',
+      },
+    ]
+    oiAnalytics.compressed = true
+    await oiAnalytics.handleValues(values)
+
+    const expectedUrl = `${oiAnalyticsConfig.OIAnalytics.host}/api/oianalytics/oibus/time-values?dataSourceId=${oiAnalyticsConfig.name}`
+    const expectedAuthentication = oiAnalyticsConfig.OIAnalytics.authentication
+    const expectedBody = JSON.stringify(values.map((value) => ({
+      timestamp: value.timestamp,
+      data: value.data,
+      pointId: value.pointId,
+    })))
+    const expectedHeaders = {
+      'Content-Type': 'application/json',
+      'Content-Encoding': 'gzip',
+    }
     expect(engine.requestService.httpSend).toHaveBeenCalledWith(expectedUrl, 'POST', expectedAuthentication, null, expectedBody, expectedHeaders)
   })
 

@@ -168,6 +168,9 @@ class ApiHandler {
   async postJson(values) {
     const data = JSON.stringify(values)
     const headers = { 'Content-Type': 'application/json' }
+    if (this.compressed) {
+      headers['Content-Encoding'] = 'gzip'
+    }
     return this.engine.requestService.httpSend(this.valuesUrl, 'POST', this.authentication, this.proxy, data, headers)
   }
 }

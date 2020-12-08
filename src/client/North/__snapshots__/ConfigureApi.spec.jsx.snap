@@ -493,6 +493,9 @@ exports[`ConfigureApi check ConfigureApi 1`] = `
                   <p>
                     Endpoint for OIAnalytics is /api/optimistik/oibus/data/time_values
                   </p>
+                  <p>
+                    When compressed is checked values will be sent gzip-ed
+                  </p>
                 </div>
               </div>
             </div>
@@ -577,6 +580,13 @@ exports[`ConfigureApi check ConfigureApi 1`] = `
             />
           </div>
         </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-4"
+        />
       </div>
       <div
         class="row"
@@ -1570,6 +1580,9 @@ exports[`ConfigureApi check update 1`] = `
                   <p>
                     Endpoint for OIAnalytics is /api/optimistik/oibus/data/time_values
                   </p>
+                  <p>
+                    When compressed is checked values will be sent gzip-ed
+                  </p>
                 </div>
               </div>
             </div>
@@ -1654,6 +1667,13 @@ exports[`ConfigureApi check update 1`] = `
             />
           </div>
         </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-4"
+        />
       </div>
       <div
         class="row"

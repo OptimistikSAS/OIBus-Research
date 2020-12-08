@@ -16,6 +16,7 @@ schema.form = {
         </p>
         <p>Endpoint for OIBus is /engine/addValues</p>
         <p>Endpoint for OIAnalytics is /api/optimistik/oibus/data/time_values</p>
+        <p>When compressed is checked values will be sent gzip-ed</p>
       </>
     ),
   },
@@ -36,6 +37,12 @@ schema.form = {
     newRow: false,
     valid: notEmpty(),
     defaultValue: '/engine/addFile',
+  },
+  compressed: {
+    type: 'OIbCheckBox',
+    label: 'Compressed',
+    help: <p>Send values compressed</p>,
+    defaultValue: false,
   },
   authentication: { type: 'OIbAuthentication' },
   networkSection: {
