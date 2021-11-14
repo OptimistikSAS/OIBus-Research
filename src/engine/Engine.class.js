@@ -5,6 +5,9 @@ const moment = require('moment-timezone')
 const VERSION = require('../../package.json').version
 const databaseService = require('../services/database.service')
 
+// the generic class need to be imported to be used by extensions
+const ApiHandlerClass = require('../north/ApiHandler.class')
+
 const protocolList = {}
 protocolList.ADS = require('../south/ADS/ADS.class')
 protocolList.Modbus = require('../south/Modbus/Modbus.class')
@@ -193,7 +196,24 @@ class Engine {
       this.logger.warn('Starting in safe mode!')
       return
     }
-    // 2. start Protocol for each data sources
+    // 2. Load additional plugins
+    // North
+    // HERE WE NEED TO DECIDE WHERE WE FIND THE LIST OF ADDITIONAL MODULES
+    // Scan a folder? a key in OIBus.json? Another file or db?
+    // We store them in 2 variables below
+    const northModules = ['TestNorth']
+    global.ApiHandler = ApiHandlerClass
+    // const southModules = ['folderscan2']
+    await Promise.all(northModules.map(async (name) => {
+      try {
+        const extension = await import(`/Users/jean-francoishenon/Work/OIBus/tests/extensions/north/${name}.class.js`)
+        apiList[name] = extension.default
+        this.logger.info(`North ${name} is added`)
+      } catch (error) {
+        this.logger.error(`North ${name} can't be loaded ${error}`)
+      }
+    }))
+    // 3. start Protocol for each data sources
     southConfig.dataSources.forEach((dataSource) => {
       const { id, protocol, enabled, name } = dataSource
       // select the correct Handler
@@ -203,12 +223,12 @@ class Engine {
           this.activeProtocols[id] = new ProtocolHandler(dataSource, this)
           this.activeProtocols[id].connect()
         } else {
-          this.logger.error(`Protocol for ${name} is not found : ${protocol}`)
+          this.logger.error(`Protocol ${name} is not found : ${protocol}`)
         }
       }
     })
 
-    // 3. start Applications
+    // 4. start Applications
     northConfig.applications.forEach((application) => {
       const { id, api, enabled, name } = application
       // select the right api handler
@@ -223,10 +243,10 @@ class Engine {
       }
     })
 
-    // 4. Initiate the cache for every North
+    // 5. Initiate the cache for every North
     await this.cache.initializeApis(this.activeApis)
 
-    // 5. Initialize scan lists
+    // 6. Initialize scan lists
 
     // Associate the scanMode to all corresponding data sources
     // so the engine will know which datasource to activate when a
@@ -267,7 +287,7 @@ class Engine {
     })
     this.logger.debug(JSON.stringify(this.scanLists, null, ' '))
 
-    // 6. Start the timers for each scan modes
+    // 7. Start the timers for each scan modes
     engineConfig.scanModes.forEach(({ scanMode, cronTime }) => {
       if (scanMode !== 'listen') {
         const job = timexe(cronTime, () => {
@@ -293,7 +313,7 @@ class Engine {
       }
     })
 
-    // 7. Start HealthSignal
+    // 8. Start HealthSignal
     this.healthSignal = new HealthSignal(this)
     this.healthSignal.start()
 
