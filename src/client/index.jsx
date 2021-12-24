@@ -21,6 +21,8 @@ import HomePage from './Home/HomePage.jsx'
 import AlertContainer from './components/AlertContainer.jsx'
 import { AlertProvider } from './context/AlertContext.jsx'
 import { ConfigProvider } from './context/ConfigContext.jsx'
+{/*HELP-MENU*/}
+import Help from './Help/Help.jsx'
 
 const Main = () => (
   <Router>

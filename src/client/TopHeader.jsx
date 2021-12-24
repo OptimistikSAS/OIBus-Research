@@ -65,6 +65,11 @@ const TopHeader = () => {
           <NavItem className="oi-navitem" active={isActive('about')} tag={Link} to="/about">
             About
           </NavItem>
+          {/*HELP-MENU*/}
+          <NavItem className="oi-navitem" active={isActive('help')} tag={Link} to="/help">
+            {'Help'}
+          </NavItem>
+          {/*HELP-MENU*/}
           <NavItem className="oi-navname">
             {` version ${status.version}`}
           </NavItem>
