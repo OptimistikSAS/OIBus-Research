@@ -98,6 +98,7 @@ class MQTT extends ApiHandler {
    * @return {void}
    */
   handleConnectEvent() {
+    this.connected = true
     this.logger.info(`North MQTT Connector connected to ${this.url}`)
     this.statusData['Connected at'] = new Date().toISOString()
     this.updateStatusDataStream()

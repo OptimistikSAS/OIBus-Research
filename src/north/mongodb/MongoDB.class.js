@@ -45,6 +45,7 @@ class MongoDB extends ApiHandler {
     this.keyParentValue = keyParentValue
 
     this.canHandleValues = true
+    this.connected = true
   }
 
   /**

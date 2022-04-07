@@ -76,6 +76,7 @@ class TimescaleDB extends ApiHandler {
         this.logger.error(`Error during connection to TimescaleDB: ${error}`)
         this.clientPG = null
       } else {
+        this.connected = true
         this.logger.info('Connection To TimescaleDB: OK')
       }
     })

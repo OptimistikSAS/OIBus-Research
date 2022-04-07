@@ -51,6 +51,7 @@ class AmazonS3 extends ApiHandler {
     this.s3 = new AWS.S3()
 
     this.canHandleFiles = true
+    this.connected = true
   }
 
   /**

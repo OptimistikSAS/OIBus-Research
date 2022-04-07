@@ -17,7 +17,7 @@ class ApiHandler {
    * the following methods:
    * - **handleValues**: receive an array of values that need to be sent to an external applications
    * - **handleFile**: receive a file that need to be sent to an external application.
-   * - **connect**: to allow to establish proper connection to the external application (optional)
+   * - **connect**: to allow establishing proper connection to the external application (optional)
    * - **disconnect**: to allow proper disconnection (optional)
    *
    * The constructor of the API need to initialize:
@@ -42,6 +42,7 @@ class ApiHandler {
     this.encryptionService = EncryptionService.getInstance()
     const { engineConfig } = this.engine.configService.getConfig()
     this.engineConfig = engineConfig
+    this.connected = false
 
     this.scanModes = this.engine.scanModes
     this.statusData = {}
@@ -96,6 +97,7 @@ class ApiHandler {
    * @return {void}
    */
   disconnect() {
+    this.connected = false
     const { name, id } = this.application
     this.logger.info(`North API ${name} (${id}) disconnected`)
     this.engine.eventEmitters[`/north/${id}/sse`]?.events?.off('data', this.listener)
