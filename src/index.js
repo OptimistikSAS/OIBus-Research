@@ -1,5 +1,6 @@
 const cluster = require('cluster')
 const path = require('path')
+const heapdump = require('heapdump')
 
 const VERSION = require('../package.json').version
 
@@ -16,6 +17,18 @@ const Logger = require('./engine/logger/Logger.class')
 // prevent restart loop and make possible changing the configuration
 const MAX_RESTART_COUNT = 3
 const MAX_INTERVAL_MILLISECOND = 30 * 1000
+
+const MEMORY_SNAPSHOT_INTERVAL = 1000 * 60 * 15 // every 15 minutes
+const writeFileDump = (fileName) => {
+  console.info(`Taking heap snapshot ${fileName}`)
+  heapdump.writeSnapshot(fileName, (err) => {
+    if (err) {
+      console.info(`Heap dump written to ${fileName}`)
+    } else {
+      console.error(`Error writing file ${fileName}`)
+    }
+  })
+}
 
 const logger = new Logger()
 
@@ -126,6 +139,14 @@ logger.changeParameters({
         oibusEngine.start(safeMode)
         historyQueryEngine.start(safeMode)
       }
+
+      let snapshotCounter = 0
+      writeFileDump(path.resolve(`./heapdump/snapshot-${snapshotCounter}.heapsnapshot`))
+
+      setInterval(() => {
+        snapshotCounter += 1
+        writeFileDump(path.resolve(`./heapdump/snapshot-${snapshotCounter}.heapsnapshot`))
+      }, MEMORY_SNAPSHOT_INTERVAL)
 
       // Catch Ctrl+C and properly stop the Engine
       process.on('SIGINT', () => {
