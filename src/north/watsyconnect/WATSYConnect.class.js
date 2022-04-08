@@ -86,7 +86,6 @@ class WATSYConnect extends ApiHandler {
    * @return {void}
    */
   connect() {
-    super.connect()
     this.logger.info(`Connecting WATSYConnect North MQTT Connector to ${this.url}...`)
     this.client = mqtt.connect(this.url, { port: this.port, username: this.username, password: this.encryptionService.decryptText(this.password) })
     this.client.on('error', (error) => {
@@ -94,10 +93,7 @@ class WATSYConnect extends ApiHandler {
     })
 
     this.client.on('connect', () => {
-      this.connected = true
-      this.logger.info(`Connection WATSYConnect North MQTT Connector to ${this.url}`)
-      this.statusData['Connected at'] = new Date().toISOString()
-      this.updateStatusDataStream()
+      super.connect()
     })
   }
 

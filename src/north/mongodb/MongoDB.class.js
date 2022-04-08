@@ -45,7 +45,6 @@ class MongoDB extends ApiHandler {
     this.keyParentValue = keyParentValue
 
     this.canHandleValues = true
-    this.connected = true
   }
 
   /**
@@ -73,7 +72,6 @@ class MongoDB extends ApiHandler {
    * @return {void}
    */
   connect() {
-    super.connect()
     this.logger.info(`Connection to MongoDB: ${this.user === '' ? `mongodb://${this.host}` : `mongodb://${this.user}:<password>@${this.host}`}`)
     const url = (this.user === '') ? `mongodb://${this.host}`
       : `mongodb://${this.user}:${this.encryptionService.decryptText(this.password)}@${this.host}`
@@ -83,9 +81,7 @@ class MongoDB extends ApiHandler {
       if (error) {
         this.logger.error(`Error during connection To MongoDB: ${error}`)
       } else {
-        this.logger.info('Connection To MongoDB: OK')
-        this.statusData['Connected at'] = new Date().toISOString()
-        this.updateStatusDataStream()
+        super.connect(`url: ${url}`)
         // open database db
         this.mongoDatabase = this.client.db(this.database)
 

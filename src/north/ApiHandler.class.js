@@ -68,9 +68,12 @@ class ApiHandler {
    * North api implementation to allow connection to a third party application for example.
    * @return {void}
    */
-  connect() {
+  connect(additionalInfo = '') {
     const { name, api } = this.application
-    this.logger.info(`North API ${name} started with protocol ${api}`)
+    this.connected = true
+    this.statusData['Connected at'] = new Date().toISOString()
+    this.updateStatusDataStream()
+    this.logger.info(`North API ${name} started with protocol ${api} ${additionalInfo}`)
   }
 
   initializeStatusData() {

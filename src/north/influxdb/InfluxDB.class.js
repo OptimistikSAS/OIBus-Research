@@ -44,7 +44,6 @@ class InfluxDB extends ApiHandler {
     this.timestampPathInDataValue = timestampPathInDataValue
 
     this.canHandleValues = true
-    this.connected = true
   }
 
   /**

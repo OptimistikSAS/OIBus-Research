@@ -46,7 +46,6 @@ class CsvToHttp extends ApiHandler {
 
     this.canHandleFiles = true
     this.canHandleValues = false
-    this.connected = true
   }
 
   /**

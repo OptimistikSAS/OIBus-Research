@@ -65,7 +65,7 @@ class TimescaleDB extends ApiHandler {
    * @return {void}
    */
   connect() {
-    this.logger.info(`Connection to TimescaleDB: postgres://${this.user}:<password>@${this.host}/${this.database}`)
+    this.logger.info(`Connecting to TimescaleDB: postgres://${this.user}:<password>@${this.host}/${this.database}`)
 
     // Build the url
     const url = `postgres://${this.user}:${this.encryptionService.decryptText(this.password)}@${this.host}/${this.database}`
@@ -76,8 +76,7 @@ class TimescaleDB extends ApiHandler {
         this.logger.error(`Error during connection to TimescaleDB: ${error}`)
         this.clientPG = null
       } else {
-        this.connected = true
-        this.logger.info('Connection To TimescaleDB: OK')
+        super.connect()
       }
     })
   }

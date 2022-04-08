@@ -75,9 +75,7 @@ class MQTT extends ApiHandler {
    * @return {void}
    */
   async connect() {
-    super.connect()
     this.logger.info(`Connecting North MQTT Connector to ${this.url}...`)
-
     const options = {
       username: this.username,
       password: this.password,
@@ -98,10 +96,7 @@ class MQTT extends ApiHandler {
    * @return {void}
    */
   handleConnectEvent() {
-    this.connected = true
-    this.logger.info(`North MQTT Connector connected to ${this.url}`)
-    this.statusData['Connected at'] = new Date().toISOString()
-    this.updateStatusDataStream()
+    super.connect(`url: ${this.url}`)
   }
 
   /**

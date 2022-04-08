@@ -23,7 +23,6 @@ class OIConnect extends ApiHandler {
 
     this.canHandleValues = true
     this.canHandleFiles = true
-    this.connected = true
   }
 
   /**

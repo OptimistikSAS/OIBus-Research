@@ -21,7 +21,6 @@ class FileWriter extends ApiHandler {
     this.outputFolder = path.resolve(applicationParameters.FileWriter.outputFolder)
     this.prefixFileName = applicationParameters.FileWriter.prefixFileName ?? ''
     this.suffixFileName = applicationParameters.FileWriter.suffixFileName ?? ''
-    this.connected = true
   }
 
   /**
