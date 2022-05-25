@@ -9,6 +9,7 @@ const databaseService = require('../services/database.service')
 const BaseEngine = require('./BaseEngine.class')
 const HealthSignal = require('./HealthSignal.class')
 const Cache = require('./Cache.class')
+const Queue = require('../services/queue.class')
 
 /**
  *
@@ -39,6 +40,9 @@ class OIBusEngine extends BaseEngine {
     this.addValuesCount = 0
     this.addFileCount = 0
     this.forwardedHealthSignalMessages = 0
+
+    // manage a queue for concurrent request to write to SQL
+    this.queue = new Queue(this.logger)
   }
 
   /**
@@ -61,7 +65,7 @@ class OIBusEngine extends BaseEngine {
 
     // Configure the Cache
     this.cache = new Cache(this)
-    this.cache.initialize()
+    // this.cache.initialize()
 
     this.logger.info(`Starting Engine ${this.version}
     architecture: ${process.arch}
@@ -82,7 +86,12 @@ class OIBusEngine extends BaseEngine {
    */
   async addValues(id, values) {
     this.logger.trace(`Engine: Add ${values?.length} values from "${this.activeProtocols[id]?.dataSource.name || id}"`)
-    if (values.length) await this.cache.cacheValues(id, values)
+    Object.values(this.activeApis)
+      .forEach((api) => {
+        if (api.isSubscribed(id)) {
+          api.cacheValues(id, values)
+        }
+      })
   }
 
   /**
@@ -216,7 +225,7 @@ class OIBusEngine extends BaseEngine {
     }
 
     // 4. Initiate the cache for every North
-    await this.cache.initializeApis(this.activeApis)
+    // await this.cache.initializeApis(this.activeApis)
 
     // 5. Initialize scan lists
 
@@ -431,12 +440,19 @@ class OIBusEngine extends BaseEngine {
       }, {})
   }
 
+  async getCacheStatsForApis() {
+    // Get points APIs stats
+    const pointApis = Object.values(this.activeApis).filter((api) => api.canHandleValues)
+    const valuesCacheSizeActions = pointApis.map((api) => api.getValueCacheStats)
+    return Promise.all(valuesCacheSizeActions)
+  }
+
   /**
    * Get status information.
    * @returns {object} - The status information
    */
   async getStatus() {
-    const apisCacheStats = await this.cache.getCacheStatsForApis()
+    const apisCacheStats = await this.getCacheStatsForApis()
     const protocolsCacheStats = await this.cache.getCacheStatsForProtocols()
     const memoryUsage = this.getMemoryUsage()
 

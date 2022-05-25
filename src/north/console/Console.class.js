@@ -1,6 +1,7 @@
 const fs = require('fs/promises')
 
 const ApiHandler = require('../ApiHandler.class')
+const MainCache = require('../../engine/cache/MainCache.class')
 
 class Console extends ApiHandler {
   static category = 'Debug'
@@ -54,7 +55,7 @@ class Console extends ApiHandler {
     this.statusData['Number of files sent since OIBus has started'] += 1
     this.statusData['Last upload at'] = new Date().toISOString()
     this.updateStatusDataStream()
-    return ApiHandler.STATUS.SUCCESS
+    return MainCache.STATUS.SUCCESS
   }
 }
 
