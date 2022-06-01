@@ -233,7 +233,7 @@ const getFileCount = async (database, filePath) => {
  * Get file count for API.
  * @param {sqlite.Database} database - The database to use
  * @param {string} api - The api to get file count
- * @return {number} - The file count
+ * @return {Promise<number>} - The file count
  */
 const getFileCountForApi = async (database, api) => {
   const query = `SELECT COUNT(*) AS count 
@@ -320,11 +320,10 @@ const getLogsCount = async (databasePath) => {
 
 /**
  * Get number of errored values.
- * @param {string} databasePath - The database path
+ * @param {sqlite.Database} database - The database
  * @returns {Promise<number>} - The count
  */
-const getErroredValuesCount = async (databasePath) => {
-  const database = await sqlite.open({ filename: databasePath, driver: sqlite3.cached.Database })
+const getErroredValuesCount = async (database) => {
   const query = `SELECT COUNT(*) AS count
                  FROM ${CACHE_TABLE_NAME}`
   const stmt = await database.prepare(query)
@@ -334,11 +333,10 @@ const getErroredValuesCount = async (databasePath) => {
 
 /**
  * Get number of errored files.
- * @param {string} databasePath - The database path
+ * @param {sqlite.Database} database - The database
  * @returns {Promise<number>} - The count
  */
-const getErroredFilesCount = async (databasePath) => {
-  const database = await sqlite.open({ filename: databasePath, driver: sqlite3.cached.Database })
+const getErroredFilesCount = async (database) => {
   const query = `SELECT COUNT(*) AS count
                  FROM ${CACHE_TABLE_NAME}`
   const stmt = await database.prepare(query)

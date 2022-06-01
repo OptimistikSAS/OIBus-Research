@@ -13,18 +13,10 @@ class ValueCache {
     this.logger = api.logger
     this.apiCacheConfig = api.application.caching
     this.queue = queue
-    const {
-      cacheFolder,
-      archive,
-    } = engineCacheConfig
-    const cacheFolderPath = path.resolve(cacheFolder)
+    const cacheFolderPath = path.resolve(engineCacheConfig.cacheFolder)
     this.cacheFolder = cacheFolderPath
     this.databasePath = `${cacheFolderPath}/${api.application.id}.db`
-    this.archiveMode = archive.enabled
-    this.archiveFolder = path.resolve(archive.archiveFolder)
-    this.retentionDuration = (archive.retentionDuration) * 3600000
     this.valuesErrorDatabase = null
-
     this.database = null
     this.timeout = null
     this.sendInProgress = false
@@ -63,7 +55,7 @@ class ValueCache {
    * @returns {Promise<void>} - The result
    */
   async cacheValues(id, values) {
-    // Update stat for datasource id
+    // Update stat
     this.cacheStat = (this.cacheStat || 0) + values.length
 
     await this.queue.add(databaseService.saveValues, this.database, this.api.engine.activeProtocols[id]?.dataSource.name || id, values)
@@ -156,11 +148,10 @@ class ValueCache {
   }
 
   async getStats() {
-    const totalCount = this.cacheStat
     const cacheSize = await databaseService.getCount(this.database)
     return {
       name: `${this.api.application.name} (points)`,
-      count: totalCount || 0,
+      count: this.cacheStat || 0,
       cache: cacheSize || 0,
     }
   }

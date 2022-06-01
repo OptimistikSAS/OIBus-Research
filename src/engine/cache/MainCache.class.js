@@ -1,3 +1,4 @@
+const fs = require('fs/promises')
 const databaseService = require('../../services/database.service')
 
 class MainCache {
@@ -43,6 +44,56 @@ class MainCache {
     }
 
     return MainCache.filesErrorDatabase
+  }
+
+  /**
+   * Initialize and return the file database singleton
+   * @param {Logger} logger - The logger
+   * @param {string} cacheFolder - The cache folder
+   * @return {Promise<sqlite.Database>} - The file database
+   */
+  static async getFilesDatabaseInstance(logger, cacheFolder) {
+    if (!MainCache.filesDatabase) {
+      const filesDatabasePath = `${cacheFolder}/fileCache.db`
+      logger.debug(`Initialize files db: ${filesDatabasePath}`)
+      MainCache.filesDatabase = await databaseService.createFilesDatabase(filesDatabasePath)
+      logger.debug(`Files db count: ${await databaseService.getCount(MainCache.filesDatabase)}`)
+    }
+
+    return MainCache.filesDatabase
+  }
+
+  /**
+   * Transfer the file into the cache folder.
+   *
+   * @param {Logger} logger - The logger
+   * @param {string} filePath - The file path
+   * @param {string} cachePath - The cache path
+   * @param {boolean} preserveFiles - Whether to preserve the file
+   * @returns {Promise<*>} - The result promise
+   */
+  static async transferFile(logger, filePath, cachePath, preserveFiles) {
+    logger.debug(`transferFile(${filePath}) - preserveFiles:${preserveFiles}, cachePath:${cachePath}`)
+
+    if (preserveFiles) {
+      await fs.copyFile(filePath, cachePath)
+    } else {
+      try {
+        await fs.rename(filePath, cachePath)
+      } catch (renameError) {
+        // In case of cross-device link error we copy+delete instead
+        if (renameError.code !== 'EXDEV') {
+          throw renameError
+        }
+        logger.debug('Cross-device link error during rename, copy+paste instead')
+        await fs.copyFile(filePath, cachePath)
+        try {
+          await fs.unlink(filePath)
+        } catch (unlinkError) {
+          logger.error(unlinkError)
+        }
+      }
+    }
   }
 }
 
