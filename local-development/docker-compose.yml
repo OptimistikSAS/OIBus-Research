@@ -14,95 +14,95 @@ services:
         volumes:
             - /var/lib/mysql
 
-    postgresql:
-        container_name: oibus-postgresql
-        image: postgres
-        volumes:
-            - /var/lib/postgresql/data
-        ports:
-            - ${FORWARD_POSTGRESQL_PORT:-5432}:5432
-        environment:
-            - TZ=Europe/Bucharest
-            - POSTGRES_USER=${DB_USERNAME:-oibus}
-            - POSTGRES_PASSWORD=${DB_PASSWORD:-oibus123}
-            - POSTGRES_DB=${DB_DATABASE:-oibus}
+    # postgresql:
+    #     container_name: oibus-postgresql
+    #     image: postgres
+    #     volumes:
+    #         - /var/lib/postgresql/data
+    #     ports:
+    #         - ${FORWARD_POSTGRESQL_PORT:-5432}:5432
+    #     environment:
+    #         - TZ=Europe/Bucharest
+    #         - POSTGRES_USER=${DB_USERNAME:-oibus}
+    #         - POSTGRES_PASSWORD=${DB_PASSWORD:-oibus123}
+    #         - POSTGRES_DB=${DB_DATABASE:-oibus}
 
-    mssql:
-        container_name: oibus-mssql
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        ports:
-            - ${FORWARD_MSSQL_PORT:-1433}:1433
-        environment:
-            SA_PASSWORD: ${MSSQL_PASSWORD:-Oibus123@}
-            ACCEPT_EULA: "Y"
+    # mssql:
+    #     container_name: oibus-mssql
+    #     image: mcr.microsoft.com/mssql/server:2019-latest
+    #     ports:
+    #         - ${FORWARD_MSSQL_PORT:-1433}:1433
+    #     environment:
+    #         SA_PASSWORD: ${MSSQL_PASSWORD:-Oibus123@}
+    #         ACCEPT_EULA: "Y"
 
-    influxdb:
-        container_name: oibus-influxdb
-        image: influxdb
-        networks:
-            - oibus-influx
-        volumes:
-            - /var/lib/influxdb
-        ports:
-            - ${FORWARD_INFLUX_PORT:-8086}:8086
+    # influxdb:
+    #     container_name: oibus-influxdb
+    #     image: influxdb
+    #     networks:
+    #         - oibus-influx
+    #     volumes:
+    #         - /var/lib/influxdb
+    #     ports:
+    #         - ${FORWARD_INFLUX_PORT:-8086}:8086
 
-    chronograf:
-        container_name: oibus-chronograf
-        image: chronograf
-        command: --influxdb-url=http://influxdb:8086
-        networks:
-            - oibus-influx
-        volumes:
-            - /var/lib/chronograf
-        ports:
-            - ${FORWARD_CHRONOGRAF_PORT:-8087}:8888
-        depends_on:
-            - influxdb
+    # chronograf:
+    #     container_name: oibus-chronograf
+    #     image: chronograf
+    #     command: --influxdb-url=http://influxdb:8086
+    #     networks:
+    #         - oibus-influx
+    #     volumes:
+    #         - /var/lib/chronograf
+    #     ports:
+    #         - ${FORWARD_CHRONOGRAF_PORT:-8087}:8888
+    #     depends_on:
+    #         - influxdb
 
-    timescaledb:
-        container_name: oibus-timescaledb
-        image: timescale/timescaledb:latest-pg13
-        volumes:
-            - /var/lib/postgresql/data
-        ports:
-            - ${FORWARD_TIMESCALE_PORT:-5433}:5432
-        environment:
-            - TIMESCALEDB_TELEMETRY=off
-            - POSTGRES_PASSWORD=${DB_PASSWORD:-oibus123}
-            - POSTGRES_DB=${DB_DATABASE:-oibus}
+    # timescaledb:
+    #     container_name: oibus-timescaledb
+    #     image: timescale/timescaledb:latest-pg13
+    #     volumes:
+    #         - /var/lib/postgresql/data
+    #     ports:
+    #         - ${FORWARD_TIMESCALE_PORT:-5433}:5432
+    #     environment:
+    #         - TIMESCALEDB_TELEMETRY=off
+    #         - POSTGRES_PASSWORD=${DB_PASSWORD:-oibus123}
+    #         - POSTGRES_DB=${DB_DATABASE:-oibus}
 
-    rabbitmq:
-        container_name: oibus-rabbitmq
-        image: rabbitmq:3-management
-        ports:
-            - ${FORWARD_RABBITMQ_PORT:-5672}:5672
+    # rabbitmq:
+    #     container_name: oibus-rabbitmq
+    #     image: rabbitmq:3-management
+    #     ports:
+    #         - ${FORWARD_RABBITMQ_PORT:-5672}:5672
 
-    mosquitto:
-        container_name: oibus-mosquitto
-        image: eclipse-mosquitto
-        ports:
-            - ${FORWARD_MOSQUITTO_PORT:-1883}:1883
+    # mosquitto:
+    #     container_name: oibus-mosquitto
+    #     image: eclipse-mosquitto
+    #     ports:
+    #         - ${FORWARD_MOSQUITTO_PORT:-1883}:1883
 
-    mongodb:
-        container_name: oibus-mongodb
-        image: mongo
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME:-oibus}
-            - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD:-oibus123}
-        volumes:
-            - /data/db
-        ports:
-            - ${FORWARD_MONGO_PORT:-27017}:27017
+    # mongodb:
+    #     container_name: oibus-mongodb
+    #     image: mongo
+    #     environment:
+    #         - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME:-oibus}
+    #         - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD:-oibus123}
+    #     volumes:
+    #         - /data/db
+    #     ports:
+    #         - ${FORWARD_MONGO_PORT:-27017}:27017
 
-    opcuaserver:
-        container_name: oibus-opcua
-        image: mcr.microsoft.com/iotedge/opc-plc:latest
-        restart: always
-        ports:
-            - 8080:8080
-            - 50000:50000
+    # opcuaserver:
+    #     container_name: oibus-opcua
+    #     image: mcr.microsoft.com/iotedge/opc-plc:latest
+    #     restart: always
+    #     ports:
+    #         - 8080:8080
+    #         - 50000:50000
 
-networks:
-    oibus-influx:
-        name: custom_influx
-        driver: bridge
+# networks:
+#     oibus-influx:
+#         name: custom_influx
+#         driver: bridge
