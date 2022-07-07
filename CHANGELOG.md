@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.6-beta.0](https://github.com/OptimistikSAS/OIBus/compare/v2.0.5...v2.0.6-beta.0) (2022-07-07)
+
+
+### Bug Fixes
+
+* **ci:** create prerelease ([273edd4](https://github.com/OptimistikSAS/OIBus/commit/273edd497bfa9f07fbe29dc8caeb46906861370e))
+* **deps:** adapt webpack to load monaco-editor locally instead of cdn ([9caeaa2](https://github.com/OptimistikSAS/OIBus/commit/9caeaa2400266173e8bf00dc7e229a702386a64f))
+* **deps:** replace react-json-diff by monaco editor to display config ([f3b70a5](https://github.com/OptimistikSAS/OIBus/commit/f3b70a523ce9b59b24371a7119541989f8cb8a49))
+* **deps:** update aws-sdk-js-v3 monorepo ([5b5106b](https://github.com/OptimistikSAS/OIBus/commit/5b5106b4938b70631738901dd371fc79671e195f))
+* **deps:** update dependency @koa/router to v11 ([beee709](https://github.com/OptimistikSAS/OIBus/commit/beee7096ac111f443f4c0c47e3e71f153b9663f9))
+* **deps:** update dependency humanize-duration to v3.27.2 ([ad5e4cd](https://github.com/OptimistikSAS/OIBus/commit/ad5e4cd2c439ad767cfde3b3f51250a84a6f13ad))
+* **deps:** update dependency mongodb to v4.7.0 ([d52dd38](https://github.com/OptimistikSAS/OIBus/commit/d52dd38ffc21148cf13858ddfe4ffce8d27b88b6))
+* **deps:** update dependency mssql to v8.1.2 ([5efbce3](https://github.com/OptimistikSAS/OIBus/commit/5efbce3bbb39fa7bdfcc2b3769d46e1f68ff95f2))
+* **deps:** update dependency node-opcua to v2.71.0 ([3d63294](https://github.com/OptimistikSAS/OIBus/commit/3d63294d30cef4016b302b3686fef7becb3356ee))
+* **deps:** update dependency node-opcua-certificate-manager to v2.71.0 ([f66b610](https://github.com/OptimistikSAS/OIBus/commit/f66b610cb79ea3e50843b705488f7330e9f027cb))
+* **deps:** update dependency react-flow-renderer to v10.3.8 ([448c021](https://github.com/OptimistikSAS/OIBus/commit/448c0213b8a31cd174c038511b03b0fede29901d))
+* **deps:** update dependency react-icons to v4.4.0 ([dfc61aa](https://github.com/OptimistikSAS/OIBus/commit/dfc61aaa31b7480a38a8467c6c57647bace81a99))
+* **deps:** update dependency reactstrap to v9.1.1 ([551c2da](https://github.com/OptimistikSAS/OIBus/commit/551c2da217bbb5a0509c29bea8f8996f6883c752))
+* **history:** change level of log when there is no history ([9b2af4c](https://github.com/OptimistikSAS/OIBus/commit/9b2af4ca33716755b8e74bd85e04d9d6191551a7))
+* **logger:** fix file log parameter update ([c7d377a](https://github.com/OptimistikSAS/OIBus/commit/c7d377a2f72b301ffdce501c5154fe7322d044a1))
+* **logs:** fix display of warn logs ([08fdb26](https://github.com/OptimistikSAS/OIBus/commit/08fdb262ffdab9e6b908e9dacef21e5f79dbfcf3))
+* **north:** fix oianalytics status data update on file sent ([5e59435](https://github.com/OptimistikSAS/OIBus/commit/5e594357f39614c8b4d5699917a3e03100d88ec8))
+* **opchda:** filter out empty points ([d171ebc](https://github.com/OptimistikSAS/OIBus/commit/d171ebc9be973716402d2fdb934dfa0a488db384))
+* **opchda:** gracefully kill the hda agent process ([57b4f62](https://github.com/OptimistikSAS/OIBus/commit/57b4f62b404c23a170c9ef342562d6010207134b))
+* **opchda:** Send ReadIntervalDelay to HdaAgent during the initialize action ([74b32aa](https://github.com/OptimistikSAS/OIBus/commit/74b32aa307e2c13afc4f5f615ff0e54104d66c14))
+* **opcua-ha:** add log trace for investigation ([eb3b673](https://github.com/OptimistikSAS/OIBus/commit/eb3b67395e05a2dacfa483c43f684c20a199958c))
+* **opcua:** add and fix logs and move some logic from Engine to ProtocolHandler ([128e7f5](https://github.com/OptimistikSAS/OIBus/commit/128e7f5ddbd99bc27c76bf5a6a7e7082016dcfd4))
+
 ### [2.0.5](https://github.com/OptimistikSAS/OIBus/compare/v2.0.4...v2.0.5) (2022-06-07)
 
 
