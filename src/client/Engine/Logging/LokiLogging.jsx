@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import OIbForm from '../../components/OIbForm/OIbForm.jsx'
-import { minValue, optional } from '../../../services/validation.service'
 
 const schema = { name: 'LokiLogging' }
 schema.form = {
@@ -16,7 +15,7 @@ schema.form = {
     type: 'OIbText',
     label: 'Host',
     md: 4,
-    valid: optional(),
+    valid: 'optional',
     defaultValue: '',
     help: <div>The host name of the Loki instance</div>,
   },
@@ -24,7 +23,7 @@ schema.form = {
     type: 'OIbInteger',
     newRow: false,
     md: 2,
-    valid: minValue(10),
+    valid: 'minValue(10)',
     defaultValue: 60,
     help: <div>Interval between batch of logs (in s)</div>,
   },
@@ -32,21 +31,21 @@ schema.form = {
     type: 'OIbText',
     label: 'Token address',
     md: 4,
-    valid: optional(),
+    valid: 'optional',
     defaultValue: '',
     help: <div>The address of the token provider (need username and password)</div>,
   },
   username: {
     type: 'OIbText',
     defaultValue: '',
-    valid: optional(),
+    valid: 'optional',
     md: 3,
   },
   password: {
     newRow: false,
     type: 'OIbPassword',
     defaultValue: '',
-    valid: optional(),
+    valid: 'optional',
     md: 3,
   },
 }

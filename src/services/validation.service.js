@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import path from 'path'
 
 // regular expressions to validate
@@ -75,9 +73,46 @@ const startsWithAnyOf = (tests, common = '', name = 'Value') => (val) => {
 // always return null (ie. no validation)
 const optional = () => () => null
 
-const string2valid = (input) => {
-  console.log(input)
-  return (function valid() { return null })
+const validationFunctions = {
+  notEmpty,
+  isPath,
+  isIp,
+  isHost,
+  inRange,
+  isHexaOrDecimal,
+  isHexa,
+  minLength,
+  maxLength,
+  hasLengthBetween,
+  length,
+  minValue,
+  maxValue,
+  notEndsWith,
+  endsWith,
+  startsWith,
+  startsWithAnyOf,
+  combinedValidations,
+  optional,
+}
+
+const string2valid = (validationString = '') => (val) => {
+  console.log(validationString)
+  let valid = null // returning null indi
+  const validationArray = validationString.split(';')
+  validationArray.forEach((validation) => {
+    const [func, ...args] = validation.split(/[(,)]/)
+    console.log(func, args)
+    try {
+      const check = validationFunctions[func](...args)(val)
+      if (check !== null) valid = valid ? valid += check : check
+      console.log('validing:', valid)
+    } catch (error) {
+      valid = `internal error: ${validation})`
+      console.error(`internal error: ${validation})`)
+    }
+  })
+  console.log('valid:', valid)
+  return valid
 }
 
 export {

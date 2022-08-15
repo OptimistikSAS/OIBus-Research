@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import OIbForm from '../../components/OIbForm/OIbForm.jsx'
-import { minValue, notEmpty } from '../../../services/validation.service'
 
 const schema = { name: 'SQLiteLogging' }
 schema.form = {
@@ -16,7 +15,7 @@ schema.form = {
     type: 'OIbText',
     label: 'File name of sqlite db',
     md: 4,
-    valid: notEmpty(),
+    valid: 'notEmpty',
     defaultValue: '',
     help: <div>The file name of the database file</div>,
   },
@@ -25,7 +24,7 @@ schema.form = {
     newRow: false,
     md: 2,
     label: 'Database max size',
-    valid: minValue(10000),
+    valid: 'minValue(10000)',
     defaultValue: 1000000,
     help: <div>Max size of the sqlite database (Byte)</div>,
   },
