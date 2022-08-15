@@ -1,6 +1,6 @@
 {
   "name": "oibus",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "main": "index.js",
   "author": "Optimistik SAS",
   "license": "EUPL",
@@ -23,15 +23,15 @@
     "build-linux": "npm run build-client && npm run build-lib-linux && rimraf ./dist/linux && pkg ./src/index.js --public --compress GZip --config package.json --output ./dist/linux/oibus --target node16-linux-x64 && ncp ./deps/linux ./dist/linux && ncp ./src/config/defaultConfig.json ./dist/linux/defaultConfig.json",
     "build-win-setup": "rimraf ./dist/win/win-setup-release && C:\\\"Program Files (x86)\"\\\"Inno Setup 6\"\\iscc.exe \"./deps/win/oibus_setup.iss\" \"/DMyAppVersion=\"%npm_package_version%",
     "start-client": "webpack --mode development --watch",
-    "test": "jest --coverage",
+    "test": "jest --coverage --modulePathIgnorePatterns='.*\\.test\\.js$'",
+    "int-test": "jest --coverage --testPathPattern='.*\\.test\\.js$'",
     "lint": "eslint src --ext .jsx --ext .js",
     "lint-fix": "eslint src --ext .jsx --ext .js --fix",
     "version": "npm run build && gulp build-archives",
     "postversion": "git push && git push --tags",
     "bump": "standard-version -i CHANGELOG.md",
     "postbump": "git push --follow-tags origin",
-    "setup-dev-env": "cd local-development && docker-compose --env-file ./.env.dev up",
-    "seed-destinations": "node ./local-developent/database-seeder/seed-db.js"
+    "setup-dev-env": "docker-compose --env-file ./tests/.env.dev up"
   },
   "keywords": [
     "Optimistik"
@@ -101,6 +101,7 @@
     "babel-jest": "28.1.3",
     "babel-loader": "8.2.5",
     "css-loader": "6.7.1",
+    "dotenv": "16.0.1",
     "eslint": "8.21.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-import": "2.26.0",
