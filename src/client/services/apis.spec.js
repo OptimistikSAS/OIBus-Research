@@ -1,5 +1,5 @@
 import apis from './apis'
-import testConfig from '../../../tests/testConfig'
+import { testConfig } from '../../../tests/testConfig'
 
 const logSample = {
   id: 12852,
@@ -13,10 +13,10 @@ global.fetch = jest.fn().mockImplementation((uri) => {
   let jsonString
   switch (uri) {
     case '/config/schemas/north':
-      jsonString = JSON.stringify(testConfig.northSchemas)
+      jsonString = JSON.stringify(['a', 'b', 'c'])
       break
     case '/config/schemas/south':
-      jsonString = JSON.stringify(testConfig.southSchemas)
+      jsonString = JSON.stringify(['d', 'e', 'f'])
       break
     case '/config':
       jsonString = JSON.stringify({ config: testConfig })
@@ -37,18 +37,18 @@ global.fetch = jest.fn().mockImplementation((uri) => {
 })
 
 describe('apis', () => {
-  it('check getSouthSchemas', async () => {
-    const result = await apis.getSouthSchemas()
-    expect(result).toEqual(testConfig.southSchemas)
+  it('check getSouthProtocols', async () => {
+    const result = await apis.getSouthProtocols()
+    expect(result).toEqual(['d', 'e', 'f'])
   })
 
-  it('check getSouthSchemaswith status 500', async () => {
+  it('check getSouthProtocols with status 500', async () => {
     const originalError = console.error
     console.error = jest.fn()
     const originalGlobalFetchMock = global.fetch
     global.fetch = jest.fn().mockImplementation(() => ({ status: 500 }))
 
-    const request = apis.getSouthSchemas()
+    const request = apis.getSouthProtocols()
     await expect(request).rejects.toThrow()
     expect(console.error).toBeCalled()
 
@@ -56,7 +56,7 @@ describe('apis', () => {
     console.error = originalError
   })
 
-  it('check getSouthSchemaswith catch error', async () => {
+  it('check getSouthProtocols with catch error', async () => {
     const originalError = console.error
     console.error = jest.fn()
     const originalGlobalFetchMock = global.fetch
@@ -65,7 +65,7 @@ describe('apis', () => {
       throw error
     })
 
-    const request = apis.getSouthSchemas()
+    const request = apis.getSouthProtocols()
     await expect(request).rejects.toThrowError('test error')
     expect(console.error).toBeCalled()
 
@@ -73,9 +73,9 @@ describe('apis', () => {
     console.error = originalError
   })
 
-  it('check getNorthSchemas', async () => {
-    const result = await apis.getNorthSchemas()
-    expect(result).toEqual(testConfig.northSchemas)
+  it('check getNorthApis', async () => {
+    const result = await apis.getNorthApis()
+    expect(result).toEqual(['a', 'b', 'c'])
   })
 
   it('check getConfig', async () => {

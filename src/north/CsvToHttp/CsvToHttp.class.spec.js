@@ -1,9 +1,9 @@
 const path = require('path')
 const CsvToHttp = require('./CsvToHttp.class')
-const config = require('../../../tests/testConfig').default
+const ApiHandler = require('../ApiHandler.class')
+const { defaultConfig: config } = require('../../../tests/testConfig')
 const EncryptionService = require('../../services/EncryptionService.class')
 
-const { NorthHandler } = global
 // Mock logger
 jest.mock('../../engine/logger/Logger.class')
 
@@ -18,7 +18,43 @@ engine.decryptPassword = (password) => password
 engine.eventEmitters = {}
 
 // Define the CsvToHttp North
-const csvToHttpConfig = config.north.applications[6]
+const csvToHttpConfig = {
+  id: 'north-csv-to-http',
+  name: 'CsvToHttp',
+  api: 'CsvToHttp',
+  enabled: false,
+  CsvToHttp: {
+    applicativeHostUrl: 'https://localhost.com',
+    requestMethod: 'POST',
+    proxy: '',
+    mapping: [
+      {
+        csvField: 'Id',
+        httpField: 'Identification',
+        type: 'integer',
+      },
+      {
+        csvField: 'Begin',
+        httpField: 'date',
+        type: 'short date (yyyy-mm-dd)',
+      },
+    ],
+    authentication: {
+      type: 'API Key',
+      secretKey: 'anytoken',
+      key: 'anyvalue',
+    },
+    bodyMaxLength: 100,
+    csvDelimiter: ';',
+  },
+  caching: {
+    sendInterval: 1000,
+    retryInterval: 5000,
+    groupCount: 1000,
+    maxSendCount: 10000,
+  },
+  subscribedTo: [],
+}
 let csvToHttpNorth = null
 
 beforeEach(async () => {
@@ -37,13 +73,13 @@ describe('CsvToHttp', () => {
   it('should properly reject file if type is other than csv', async () => {
     const response = await csvToHttpNorth.handleFile('../../../tests/csvToHttpTest')
 
-    expect(response).toEqual(NorthHandler.STATUS.LOGIC_ERROR)
+    expect(response).toEqual(ApiHandler.STATUS.LOGIC_ERROR)
   })
 
   it('should properly handle csv files', async () => {
     const response = await csvToHttpNorth.handleFile(path.resolve('./tests/csvToHttpTest.csv'))
 
-    expect(response).toEqual(NorthHandler.STATUS.SUCCESS)
+    expect(response).toEqual(ApiHandler.STATUS.SUCCESS)
   })
 
   it('should properly test validity of header', async () => {
@@ -88,7 +124,7 @@ describe('CsvToHttp', () => {
     })
     const response = await csvToHttpNorth.handleFile(path.resolve('./tests/csvToHttpTest.csv'))
 
-    expect(response).toEqual(NorthHandler.STATUS.SUCCESS)
+    expect(response).toEqual(ApiHandler.STATUS.SUCCESS)
     csvToHttpNorth.mapping.pop()
   })
 
