@@ -3,27 +3,8 @@
  * @param {Object} ctx - The KOA context
  * @return {void}
  */
-const getStatus = async (ctx) => {
-  const status = await ctx.app.engine.getStatus()
-  ctx.ok(status)
-}
-
-/**
- * Get live status for a given South
- * @param {Object} ctx - The KOA context
- * @return {void}
- */
-const getStatusForSouth = async (ctx) => {
-  const status = await ctx.app.engine.getStatusForSouth(ctx.params.id)
-  ctx.ok(status)
-}
-/**
- * Get live status for a given North
- * @param {Object} ctx - The KOA context
- * @return {void}
- */
-const getStatusForNorth = async (ctx) => {
-  const status = await ctx.app.engine.getStatusForNorth(ctx.params.id)
+const getOIBusInfo = async (ctx) => {
+  const status = await ctx.app.engine.getOIBusInfo()
   ctx.ok(status)
 }
 
@@ -105,11 +86,11 @@ const aliveSignal = async (ctx) => {
 }
 
 module.exports = {
-  getStatus,
-  getStatusForSouth,
-  getStatusForNorth,
   getNorthSchemas,
   getSouthSchemas,
+  getOIBusInfo,
+  getNorthList,
+  getSouthList,
   addValues,
   addFile,
   aliveSignal,

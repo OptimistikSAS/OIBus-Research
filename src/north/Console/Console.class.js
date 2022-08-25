@@ -26,10 +26,11 @@ class Console extends NorthHandler {
     } else {
       process.stdout.write(`(${values.length})`)
     }
-    this.statusData['Last handled values at'] = new Date().toISOString()
-    this.statusData['Number of values sent since OIBus has started'] += values.length
-    this.statusData['Last added point id (value)'] = `${values[values.length - 1].pointId} (${JSON.stringify(values[values.length - 1].data)})`
-    this.updateStatusDataStream()
+    this.updateStatusDataStream({
+      'Last handled values at': new Date().toISOString(),
+      'Number of values sent since OIBus has started': this.statusData['Number of values sent since OIBus has started'] + values.length,
+      'Last added point id (value)': `${values[values.length - 1].pointId} (${JSON.stringify(values[values.length - 1].data)})`,
+    })
     return values.length
   }
 
@@ -46,10 +47,11 @@ class Console extends NorthHandler {
       fileSize,
     }]
     console.table(data)
-    this.statusData['Last uploaded file'] = filePath
-    this.statusData['Number of files sent since OIBus has started'] += 1
-    this.statusData['Last upload at'] = new Date().toISOString()
-    this.updateStatusDataStream()
+    this.updateStatusDataStream({
+      'Last uploaded file': filePath,
+      'Number of files sent since OIBus has started': this.statusData['Number of files sent since OIBus has started'] + 1,
+      'Last upload at': new Date().toISOString(),
+    })
     return NorthHandler.STATUS.SUCCESS
   }
 }

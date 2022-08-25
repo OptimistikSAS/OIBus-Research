@@ -1,7 +1,6 @@
 const fs = require('fs/promises')
 const path = require('path')
-const sqlite = require('sqlite')
-const sqlite3 = require('sqlite3')
+const db = require('better-sqlite3')
 const mssql = require('mssql')
 const mysql = require('mysql2/promise')
 const {
@@ -98,8 +97,6 @@ class SQL extends SouthHandler {
 
   async connect() {
     await super.connect()
-    this.statusData['Connected at'] = new Date().toISOString()
-    this.updateStatusDataStream()
     this.connected = true
   }
 
@@ -427,10 +424,7 @@ class SQL extends SouthHandler {
     let database = null
     let data = []
     try {
-      database = await sqlite.open({
-        filename: this.databasePath,
-        driver: sqlite3.Database,
-      })
+      database = await db(this.databasePath)
       const stmt = await database.prepare(adaptedQuery)
       const preparedParameters = {}
       if (this.query.indexOf('@StartTime') !== -1) {
@@ -441,7 +435,6 @@ class SQL extends SouthHandler {
       }
 
       data = await stmt.all(preparedParameters)
-      await stmt.finalize()
     } catch (error) {
       this.logger.error(error)
     } finally {
@@ -501,8 +494,7 @@ class SQL extends SouthHandler {
     const startTimeLog = query.indexOf('@StartTime') !== -1 ? `StartTime = ${startTime.toISOString()}` : ''
     const endTimeLog = query.indexOf('@EndTime') !== -1 ? `EndTime = ${endTime.toISOString()}` : ''
     this.logger.info(`Executing "${query}" with ${startTimeLog} ${endTimeLog}`)
-    this.statusData['Last SQL request'] = `"${query}" with ${startTimeLog} ${endTimeLog}`
-    this.updateStatusDataStream()
+    this.updateStatusDataStream({ 'Last SQL request': `"${query}" with ${startTimeLog} ${endTimeLog}` })
   }
 
   /**

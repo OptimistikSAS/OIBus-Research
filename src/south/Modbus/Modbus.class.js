@@ -139,8 +139,6 @@ class Modbus extends SouthHandler {
     if (this.connected) {
       this.socket.end()
       this.connected = false
-      this.statusData['Connected at'] = 'Not connected'
-      this.updateStatusDataStream()
     }
     await super.disconnect()
   }
@@ -154,8 +152,7 @@ class Modbus extends SouthHandler {
       { host, port },
       () => {
         this.connected = true
-        this.statusData['Connected at'] = new Date().toISOString()
-        this.updateStatusDataStream()
+        this.updateStatusDataStream({ 'Connected at': new Date().toISOString() })
       },
     )
     this.socket.on('error', (error) => {

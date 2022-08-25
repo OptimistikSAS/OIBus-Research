@@ -53,10 +53,11 @@ class SouthHandler {
     this.connected = false
     this.addFileCount = 0
     this.addPointsCount = 0
+    this.statusData = {}
+
     this.currentlyOnScan = {}
     this.buffer = []
     this.bufferTimeout = null
-    this.statusData = {}
     this.keyFile = null
     this.certFile = null
     this.caFile = null
@@ -148,7 +149,7 @@ class SouthHandler {
     } = this.dataSource
 
     const databasePath = `${this.engine.getCacheFolder()}/${id}.db`
-    this.southDatabase = await databaseService.createConfigDatabase(databasePath)
+    this.southDatabase = databaseService.createConfigDatabase(databasePath)
 
     if (this.supportedModes?.supportHistory) {
       // Initialize lastCompletedAt for every scanMode
@@ -181,7 +182,6 @@ class SouthHandler {
     }
     this.engine.eventEmitters[`/south/${this.dataSource.id}/sse`].events = new EventEmitter()
     this.engine.eventEmitters[`/south/${this.dataSource.id}/sse`].events.on('data', this.listener)
-    this.engine.eventEmitters[`/south/${this.dataSource.id}/sse`].statusData = this.statusData
     this.updateStatusDataStream()
   }
 
@@ -196,7 +196,9 @@ class SouthHandler {
     }
   }
 
-  updateStatusDataStream() {
+  updateStatusDataStream(statusData = {}) {
+    this.statusData = { ...this.statusData, ...statusData }
+    this.engine.eventEmitters[`/south/${this.dataSource.id}/sse`].statusData = this.statusData
     this.engine.eventEmitters[`/south/${this.dataSource.id}/sse`]?.events?.emit('data', this.statusData)
   }
 
@@ -271,8 +273,7 @@ class SouthHandler {
     this.currentlyOnScan[scanMode] ??= 0 // initialize if undefined
     if (this.currentlyOnScan[scanMode] === 0) {
       this.currentlyOnScan[scanMode] = 1
-      this.statusData['Last scan at'] = new Date().toLocaleString()
-      this.updateStatusDataStream()
+      this.updateStatusDataStream({ 'Last scan at': new Date().toLocaleString() })
       try {
         if (this.supportedModes?.supportLastPoint) {
           await this.lastPointQuery(scanMode)
@@ -300,6 +301,7 @@ class SouthHandler {
       id,
     } = this.dataSource
     this.connected = false
+    this.updateStatusDataStream({ 'Connected at': 'Not connected' })
     this.logger.info(`Data source ${name} (${id}) disconnected`)
     this.engine.eventEmitters[`/south/${id}/sse`]?.events?.removeAllListeners()
     this.engine.eventEmitters[`/south/${id}/sse`]?.stream?.destroy()
@@ -318,11 +320,12 @@ class SouthHandler {
     await this.engine.addValues(this.dataSource.id, bufferSave)
 
     if (bufferSave.length > 0) {
-      this.statusData['Number of values since OIBus has started'] += bufferSave.length
-      this.statusData['Last added points at'] = new Date().toLocaleString()
-      // eslint-disable-next-line max-len
-      this.statusData['Last added point id (value)'] = `${bufferSave[bufferSave.length - 1].pointId} (${JSON.stringify(bufferSave[bufferSave.length - 1].data)})`
-      this.updateStatusDataStream()
+      this.addPointsCount += bufferSave.length
+      this.updateStatusDataStream({
+        'Number of values since OIBus has started': this.addPointsCount,
+        'Last added points at': new Date().toLocaleString(),
+        'Last added point id (value)': `${bufferSave[bufferSave.length - 1].pointId} (${JSON.stringify(bufferSave[bufferSave.length - 1].data)})`,
+      })
     }
 
     if (this.bufferTimeout) {
@@ -337,8 +340,6 @@ class SouthHandler {
    * @return {void}
    */
   async addValues(values) {
-    // used for status
-    this.addPointsCount += values.length
     // add new values to the protocol buffer
     this.buffer.push(...values)
     // if the protocol buffer is large enough, send it
@@ -360,10 +361,11 @@ class SouthHandler {
    */
   addFile(filePath, preserveFiles) {
     this.addFileCount += 1
-    this.statusData['Number of files since OIBus has started'] += 1
-    this.statusData['Last added file at'] = new Date().toLocaleString()
-    this.statusData['Last added file'] = filePath
-    this.updateStatusDataStream()
+    this.updateStatusDataStream({
+      'Number of files since OIBus has started': this.addFileCount,
+      'Last added file at': new Date().toLocaleString(),
+      'Last added file': filePath,
+    })
 
     this.engine.addFile(this.dataSource.id, filePath, preserveFiles)
   }
@@ -450,41 +452,6 @@ class SouthHandler {
     return new Promise((resolve) => {
       setTimeout(resolve, timeout)
     })
-  }
-
-  /**
-   * Get live status.
-   * @returns {object} - The live status
-   */
-  getStatus() {
-    const status = {
-      Name: this.dataSource.name,
-      Id: this.dataSource.id,
-      'Last scan time': this.statusData['Last scan at'] ? this.statusData['Last scan at'] : 'Never',
-    }
-    if (this.handlesFiles) {
-      status['Last file added time'] = this.statusData['Last added file at'] ? this.statusData['Last added file at'] : 'Never'
-      status['Number of files added'] = this.addFileCount
-    }
-    if (this.supportPoints) {
-      status['Last values added time'] = this.statusData['Last added points at'] ? this.statusData['Last added points at'] : 'Never'
-      status['Number of values added'] = this.addPointsCount
-    }
-    if (this.canHandleHistory) {
-      if (this.lastCompletedAt) {
-        if (typeof this.lastCompletedAt === 'object') {
-          Object.entries(this.lastCompletedAt)
-            .forEach(([key, value]) => {
-              status[`Last completed at - ${key}`] = new Date(value).toLocaleString()
-            })
-        } else {
-          status['Last completed at'] = new Date(this.lastCompletedAt).toLocaleString()
-        }
-      } else {
-        status['Last completed at'] = 'Never'
-      }
-    }
-    return status
   }
 
   /**

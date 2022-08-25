@@ -69,10 +69,11 @@ class AmazonS3 extends NorthHandler {
       this.logger.error(error)
       return NorthHandler.STATUS.COMMUNICATION_ERROR
     }
-    this.statusData['Last uploaded file'] = filePath
-    this.statusData['Number of files sent since OIBus has started'] += 1
-    this.statusData['Last upload at'] = new Date().toISOString()
-    this.updateStatusDataStream()
+    this.updateStatusDataStream({
+      'Last uploaded file': filePath,
+      'Number of files sent since OIBus has started': this.statusData['Number of files sent since OIBus has started'] + 1,
+      'Last upload at': new Date().toISOString(),
+    })
     return NorthHandler.STATUS.SUCCESS
   }
 
