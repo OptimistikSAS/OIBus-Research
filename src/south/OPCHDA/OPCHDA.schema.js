@@ -488,7 +488,7 @@ schema.form = {
     label: 'Logging Level',
     options: ['trace', 'debug', 'info', 'warning', 'error'],
     defaultValue: 'debug',
-    help: <div>Logging level for the HDA agent</div>,
+    help: '<div>Logging level for the HDA agent</div>',
   },
   HDASection: {
     type: 'OIbTitle',
@@ -575,9 +575,9 @@ schema.form = {
     label: 'Read timeout (s)',
     newRow: false,
     md: 2,
-    valid: minValue(1),
+    valid: 'minValue(1)',
     defaultValue: 180,
-    help: <div>Read timeout (s)</div>,
+    help: '<div>Read timeout (s)</div>',
   },
   scanGroupsSection: {
     type: 'OIbTitle',
@@ -605,7 +605,7 @@ schema.form = {
         type: 'OIbSelect',
         options: ['Raw', 'Average', 'Minimum', 'Maximum', 'Start', 'End'],
         defaultValue: 'Raw',
-        help: <div>Check that the aggregate is supported by the OPC Server</div>,
+        help: '<div>Check that the aggregate is supported by the OPC Server</div>',
       },
       resampling: {
         type: 'OIbSelect',
@@ -630,7 +630,7 @@ schema.points = {
     valid: 'notEmpty',
     defaultValue: '',
     unique: true,
-    help: <div>The nodeId referenced in the OPCHDA server</div>,
+    help: '<div>The nodeId referenced in the OPCHDA server</div',
   },
   scanMode: {
     type: 'OIbScanMode',

@@ -12,7 +12,7 @@ const {
   AggregateFunction,
 } = require('node-opcua-client')
 const { OPCUACertificateManager } = require('node-opcua-certificate-manager')
-const { initOpcuaCertificateFolders, MAX_NUMBER_OF_NODE_TO_LOG } = require('../opcua.service')
+const { initOpcuaCertificateFolders, MAX_NUMBER_OF_NODE_TO_LOG } = require('../opcua.service/opcua.service')
 
 /**
  * @class OPCUA_HA

@@ -1,6 +1,6 @@
 const path = require('path')
 const CsvToHttp = require('./CsvToHttp.class')
-const ApiHandler = require('../ApiHandler.class')
+const ApiHandler = require('../NorthHandler.class')
 const { defaultConfig: config } = require('../../../tests/testConfig')
 const EncryptionService = require('../../services/EncryptionService.class')
 

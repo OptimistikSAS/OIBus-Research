@@ -1,7 +1,7 @@
 const Opcua = require('node-opcua-client')
 const OPCUA_DA = require('./OPCUA_DA.class')
-const { defaultConfig: config } = require('../../../../tests/testConfig')
-const EncryptionService = require('../../../services/EncryptionService.class')
+const { defaultConfig: config } = require('../../../tests/testConfig')
+const EncryptionService = require('../../services/EncryptionService.class')
 
 // Mock node-opcua
 jest.mock('node-opcua-client', () => ({

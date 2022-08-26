@@ -89,8 +89,6 @@ module.exports = {
   getNorthSchemas,
   getSouthSchemas,
   getOIBusInfo,
-  getNorthList,
-  getSouthList,
   addValues,
   addFile,
   aliveSignal,
