@@ -57,7 +57,6 @@ const NorthNode = ({ application, indexNorth, onChange }) => {
           defaultValue={false}
           value={application.enabled}
           onChange={onChange}
-          switchButton
         />
       </div>
     </div>
