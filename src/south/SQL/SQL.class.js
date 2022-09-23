@@ -428,10 +428,10 @@ class SQL extends SouthHandler {
       const stmt = await database.prepare(adaptedQuery)
       const preparedParameters = {}
       if (this.query.indexOf('@StartTime') !== -1) {
-        preparedParameters['@StartTime'] = startTime
+        preparedParameters.StartTime = startTime.getTime()
       }
       if (this.query.indexOf('@EndTime') !== -1) {
-        preparedParameters['@EndTime'] = endTime
+        preparedParameters.EndTime = endTime.getTime()
       }
 
       data = await stmt.all(preparedParameters)
