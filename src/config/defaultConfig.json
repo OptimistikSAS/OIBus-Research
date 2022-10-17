@@ -12,14 +12,12 @@
       },
       "fileLog": {
         "level": "debug",
-        "fileName": "./logs/journal.log",
         "maxSize": 1000000,
         "numberOfFiles": 5,
         "tailable": true
       },
       "sqliteLog": {
         "level": "debug",
-        "fileName": "./logs/journal.db",
         "maxNumberOfLogs": 1000000
       },
       "lokiLog": {
@@ -32,17 +30,8 @@
       }
     },
     "caching": {
-      "cacheFolder": "./cache",
       "bufferMax": 250,
-      "bufferTimeoutInterval": 300,
-      "archive": {
-        "enabled": true,
-        "archiveFolder": "./cache/archive/",
-        "retentionDuration": 720
-      }
-    },
-    "historyQuery": {
-      "folder": "./historyQuery"
+      "bufferTimeoutInterval": 300
     },
     "scanModes": [
       {
@@ -86,11 +75,7 @@
       "retryCount": 3
     }
   },
-  "south": {
-    "dataSources": []
-  },
-  "north": {
-    "applications": []
-  },
-  "schemaVersion": 25
+  "south": [],
+  "north": [],
+  "schemaVersion": 26
 }

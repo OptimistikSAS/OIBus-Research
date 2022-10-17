@@ -25,10 +25,10 @@ const ConfigurePoints = () => {
       </div>
     )
   }
-  const dataSourceIndex = newConfig.south.dataSources.findIndex(
+  const dataSourceIndex = newConfig.south.findIndex(
     (dataSource) => dataSource.id === id,
   )
-  const dataSource = newConfig.south.dataSources[dataSourceIndex]
+  const dataSource = newConfig.south[dataSourceIndex]
 
   const { points: pointsOrdered = [], protocol } = dataSource
 
@@ -37,7 +37,7 @@ const ConfigurePoints = () => {
    * @returns {void}
    */
   const handleAdd = () => {
-    dispatchNewConfig({ type: 'addRow', name: `south.dataSources.${dataSourceIndex}.points`, value: {} })
+    dispatchNewConfig({ type: 'addRow', name: `south.${dataSourceIndex}.points`, value: {} })
   }
 
   /**
@@ -46,7 +46,7 @@ const ConfigurePoints = () => {
    * @returns {void}
    */
   const handleDelete = (index) => {
-    dispatchNewConfig({ type: 'deleteRow', name: `south.dataSources.${dataSourceIndex}.points.${index}` })
+    dispatchNewConfig({ type: 'deleteRow', name: `south.${dataSourceIndex}.points.${index}` })
   }
 
   /**
@@ -54,7 +54,7 @@ const ConfigurePoints = () => {
    * @returns {void}
    */
   const handleDeleteAllPoint = () => {
-    dispatchNewConfig({ type: 'deleteAllRows', name: `south.dataSources.${dataSourceIndex}.points` })
+    dispatchNewConfig({ type: 'deleteAllRows', name: `south.${dataSourceIndex}.points` })
   }
 
   /**
@@ -70,7 +70,7 @@ const ConfigurePoints = () => {
         .then((newPoints) => {
           dispatchNewConfig({
             type: 'importPoints',
-            name: `south.dataSources.${dataSourceIndex}.points`,
+            name: `south.${dataSourceIndex}.points`,
             value: newPoints,
           })
         })
@@ -87,7 +87,7 @@ const ConfigurePoints = () => {
   const onChange = (name, value, validity) => {
     dispatchNewConfig({
       type: 'update',
-      name: `south.dataSources.${dataSourceIndex}.${name}`,
+      name: `south.${dataSourceIndex}.${name}`,
       value,
       validity,
     })

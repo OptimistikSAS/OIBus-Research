@@ -1,5 +1,5 @@
-const fs = require('fs/promises')
-const path = require('path')
+const fs = require('node:fs/promises')
+const path = require('node:path')
 
 const { NorthHandler } = global
 
@@ -7,24 +7,25 @@ class FileWriter extends NorthHandler {
   /**
    * Constructor for FileWriter
    * @constructor
-   * @param {Object} applicationParameters - The application parameters
+   * @param {Object} settings - The North connector settings
    * @param {BaseEngine} engine - The Engine
    * @return {void}
    */
-  constructor(applicationParameters, engine) {
-    super(applicationParameters, engine)
-    this.outputFolder = path.resolve(applicationParameters.FileWriter.outputFolder)
-    this.prefixFileName = applicationParameters.FileWriter.prefixFileName ?? ''
-    this.suffixFileName = applicationParameters.FileWriter.suffixFileName ?? ''
+  constructor(settings, engine) {
+    super(settings, engine)
+    const { outputFolder, prefixFileName, suffixFileName } = settings.FileWriter
+    this.outputFolder = path.resolve(outputFolder)
+    this.prefixFileName = prefixFileName
+    this.suffixFileName = suffixFileName
   }
 
   /**
    * Handle values by writing them to a file.
-   * @param {object[]} values - The values
-   * @return {Promise} - The handle status
+   * @param {Object[]} values - The values
+   * @returns {Promise<void>} - The result promise
    */
   async handleValues(values) {
-    this.logger.debug(`FileWriter handleValues() with ${values.length} values`)
+    this.logger.debug(`Handle ${values.length} values.`)
     const fileName = `${this.prefixFileName}${new Date().getTime()}${this.suffixFileName}.json`
     const cleanedValues = values.map((value) => ({
       timestamp: value.timestamp,
@@ -32,45 +33,24 @@ class FileWriter extends NorthHandler {
       pointId: value.pointId,
     }))
     const data = JSON.stringify(cleanedValues)
-    try {
-      await fs.writeFile(path.join(this.outputFolder, fileName), data)
-      this.logger.debug(`FileWriter ${fileName} created in "${this.outputFolder}"`)
-      this.updateStatusDataStream({
-        'Last handled values at': new Date().toISOString(),
-        'Number of values sent since OIBus has started': this.statusData['Number of values sent since OIBus has started'] + values.length,
-        'Last added point id (value)': `${values[values.length - 1].pointId} (${JSON.stringify(values[values.length - 1].data)})`,
-      })
-      return values.length
-    } catch (error) {
-      this.logger.error(`Error handling values: ${error}`)
-      return NorthHandler.STATUS.LOGIC_ERROR
-    }
+
+    await fs.writeFile(path.join(this.outputFolder, fileName), data)
+    this.logger.debug(`File "${fileName}" created in "${this.outputFolder}" output folder.`)
   }
 
   /**
    * Handle the file.
    * @param {String} filePath - The path of the file
-   * @return {Promise} - The send status
+   * @returns {Promise<void>} - The result promise
    */
   async handleFile(filePath) {
-    try {
-      const stats = await fs.stat(filePath)
-      this.logger.debug(`handleFile(${filePath}) (${stats.size} bytes)`)
-      const extension = path.extname(filePath)
-      let fileName = path.basename(filePath, extension)
-      fileName = `${this.prefixFileName}${fileName}${this.suffixFileName}${extension}`
-      await fs.copyFile(filePath, path.join(this.outputFolder, fileName))
-      this.logger.debug(`FileWriter copied file ${fileName}`)
-      this.updateStatusDataStream({
-        'Last uploaded file': filePath,
-        'Number of files sent since OIBus has started': this.statusData['Number of files sent since OIBus has started'] + 1,
-        'Last upload at': new Date().toISOString(),
-      })
-      return NorthHandler.STATUS.SUCCESS
-    } catch (error) {
-      this.logger.error(`Error handling file, ${error}`)
-      return NorthHandler.STATUS.LOGIC_ERROR
-    }
+    const stats = await fs.stat(filePath)
+    this.logger.debug(`Handle file "${filePath}" (${stats.size} bytes).`)
+    const extension = path.extname(filePath)
+    let fileName = path.basename(filePath, extension)
+    fileName = `${this.prefixFileName}${fileName}${this.suffixFileName}${extension}`
+    await fs.copyFile(filePath, path.join(this.outputFolder, fileName))
+    this.logger.debug(`File "${filePath}" copied into "${fileName}".`)
   }
 }
 FileWriter.schema = require('./FileWriter.schema')

@@ -1,5 +1,5 @@
-const cluster = require('cluster')
-const path = require('path')
+const cluster = require('node:cluster')
+const path = require('node:path')
 
 const VERSION = require('../package.json').version
 
@@ -11,27 +11,32 @@ const HistoryQueryEngine = require('./HistoryQuery/HistoryQueryEngine.class')
 const Logger = require('./engine/logger/Logger.class')
 const EncryptionService = require('./services/EncryptionService.class')
 
+const { getCommandLineArguments, createFolder } = require('./services/utils')
+
 // In case there is an error the worker process will exit.
 // If this happens MAX_RESTART_COUNT times in less than MAX_INTERVAL_MILLISECOND interval
 // it means that there is probably a configuration error, so we restart in safe mode to
 // prevent restart loop and make possible changing the configuration
 const MAX_RESTART_COUNT = 3
 const MAX_INTERVAL_MILLISECOND = 30 * 1000
+const CACHE_FOLDER = './cache'
+const LOG_FOLDER_NAME = 'logs'
+const MAIN_LOG_FILE_NAME = 'main-journal.log'
 
 const logger = new Logger()
 
 const {
   configFile,
   check,
-} = ConfigService.getCommandLineArguments()
+} = getCommandLineArguments()
 
-logger.changeParameters({
+const logParameters = {
   engineName: 'OIBus-main',
   logParameters: {
     consoleLog: { level: 'debug' },
     fileLog: {
       level: 'debug',
-      fileName: `${path.parse(configFile).dir}/OIBus-main-journal.log`,
+      fileName: path.resolve(path.parse(configFile).dir, LOG_FOLDER_NAME, MAIN_LOG_FILE_NAME),
       maxSize: 1000000,
       numberOfFiles: 5,
       tailable: true,
@@ -39,11 +44,16 @@ logger.changeParameters({
     sqliteLog: { level: 'none' },
     lokiLog: { level: 'none' },
   },
-}).then(() => {
+}
+
+logger.changeParameters(logParameters).then(async () => {
+  const baseDir = path.extname(configFile) ? path.parse(configFile).dir : configFile
+  await createFolder(baseDir)
+
   if (cluster.isMaster) {
     // Master role is nothing except launching a worker and relaunching another
     // one if exit is detected (typically to load a new configuration)
-    logger.info(`Starting OIBus version: ${VERSION}`)
+    logger.info(`Starting OIBus version ${VERSION}.`)
 
     let restartCount = 0
     let startTime = (new Date()).getTime()
@@ -79,12 +89,6 @@ logger.changeParameters({
               cluster.workers[id].send({ type: 'reload-oibus-engine' })
             })
           break
-        case 'reload-historyquery-engine':
-          Object.keys(cluster.workers)
-            .forEach((id) => {
-              cluster.workers[id].send({ type: 'reload-historyquery-engine' })
-            })
-          break
         case 'reload':
           Object.keys(cluster.workers)
             .forEach((id) => {
@@ -105,20 +109,24 @@ logger.changeParameters({
       }
     })
   } else {
-    process.chdir(path.parse(configFile).dir)
+    process.chdir(baseDir)
 
     // Migrate config file, if needed
-    migrationService.migrate(configFile).then(async () => {
+    migrationService.migrate(configFile, logParameters).then(async () => {
       // this condition is reached only for a worker (i.e. not master)
       // so this is here where we start the web-server, OIBusEngine and HistoryQueryEngine
 
-      const configService = new ConfigService(configFile)
+      // Create the base cache folder
+      await createFolder(CACHE_FOLDER)
+
+      const configService = new ConfigService(configFile, CACHE_FOLDER)
+      await configService.init()
 
       const encryptionService = EncryptionService.getInstance()
       encryptionService.setKeyFolder(configService.keyFolder)
       encryptionService.setCertsFolder(configService.certFolder)
-      encryptionService.checkOrCreatePrivateKey()
-      encryptionService.checkOrCreateCertFiles()
+      await encryptionService.checkOrCreatePrivateKey()
+      await encryptionService.checkOrCreateCertFiles()
 
       const safeMode = process.env.SAFE_MODE === 'true'
 
@@ -127,12 +135,18 @@ logger.changeParameters({
       const server = new Server(encryptionService, oibusEngine, historyQueryEngine)
 
       if (check) {
-        logger.warn('OIBus is running in check mode')
+        logger.warn('OIBus is running in check mode.')
         process.send({ type: 'shutdown-ready' })
       } else {
-        oibusEngine.start(safeMode)
-        historyQueryEngine.start(safeMode)
-        server.start()
+        oibusEngine.start(safeMode).then(() => {
+          logger.info('OIBus engine fully started.')
+        })
+        historyQueryEngine.start(safeMode).then(() => {
+          logger.info('History query engine fully started.')
+        })
+        server.start().then(() => {
+          logger.info('OIBus web server fully started.')
+        })
       }
 
       // Catch Ctrl+C and properly stop the Engine
@@ -151,14 +165,17 @@ logger.changeParameters({
           case 'reload-oibus-engine':
             logger.info('Reloading OIBus Engine')
             await oibusEngine.stop()
-            await server.stop()
-            oibusEngine.start(safeMode)
-            server.start()
-            break
-          case 'reload-historyquery-engine':
-            logger.info('Reloading HistoryQuery Engine')
             await historyQueryEngine.stop()
-            historyQueryEngine.start(safeMode)
+            await server.stop()
+            oibusEngine.start(safeMode).then(() => {
+              logger.info('OIBus engine fully started.')
+            })
+            historyQueryEngine.start().then(() => {
+              logger.info('History engine fully started.')
+            })
+            server.start().then(() => {
+              logger.info('OIBus web server fully started.')
+            })
             break
           case 'reload':
             logger.info('Reloading OIBus')

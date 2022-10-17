@@ -1,4 +1,4 @@
-const fs = require('fs/promises')
+const fs = require('node:fs/promises')
 
 const { NorthHandler } = global
 
@@ -6,14 +6,23 @@ class OIConnect extends NorthHandler {
   /**
    * Constructor for OIConnect
    * @constructor
-   * @param {Object} applicationParameters - The application parameters
+   * @param {Object} settings - The North connector settings
    * @param {BaseEngine} engine - The Engine
    * @return {void}
    */
-  constructor(applicationParameters, engine) {
-    super(applicationParameters, engine)
-    const { host, valuesEndpoint, fileEndpoint, authentication, proxy } = applicationParameters.OIConnect
-    const name = `${this.engineConfig.engineName}:${this.application.name}`
+  constructor(settings, engine) {
+    super(settings, engine)
+    this.canHandleValues = true
+    this.canHandleFiles = true
+
+    const {
+      host,
+      valuesEndpoint,
+      fileEndpoint,
+      authentication,
+      proxy,
+    } = settings.OIConnect
+    const name = `${this.engineConfig.engineName}:${this.settings.name}`
     this.valuesUrl = `${host}${valuesEndpoint}?name=${name}`
     this.fileUrl = `${host}${fileEndpoint}?name=${name}`
     this.authentication = authentication
@@ -21,35 +30,45 @@ class OIConnect extends NorthHandler {
   }
 
   /**
-   * Handle messages by sending them to another OIBus
-   * @param {object[]} values - The values
-   * @return {Promise} - The handle status
+   * Handle values by sending them to the specified endpoint
+   * @param {Object[]} values - The values to send
+   * @returns {Promise<void>} - The result promise
    */
   async handleValues(values) {
-    this.updateStatusDataStream({
-      'Last handled values at': new Date().toISOString(),
-      'Number of values sent since OIBus has started': this.statusData['Number of values sent since OIBus has started'] + values.length,
-      'Last added point id (value)': `${values[values.length - 1].pointId} (${JSON.stringify(values[values.length - 1].data)})`,
-    })
-    await this.postJson(values)
-    this.logger.debug(`OIConnect ${this.application.name} has posted ${values.length} values`)
-    return values.length
+    this.logger.trace(`Handle ${values.length} values.`)
+    const data = JSON.stringify(values)
+    const headers = { 'Content-Type': 'application/json' }
+    await this.engine.requestService.httpSend(this.valuesUrl, 'POST', this.authentication, this.proxy, data, headers)
+    this.logger.debug(`OIConnect ${this.settings.name} has posted ${values.length} values.`)
   }
 
   /**
-   * Handle the file.
+   * Handle the file by sending it to the specified endpoint.
    * @param {String} filePath - The path of the file
-   * @return {Promise} - The resulting HTTP status
+   * @returns {Promise<void>} - The result promise
    */
   async handleFile(filePath) {
     const stats = await fs.stat(filePath)
-    this.logger.debug(`OIConnect ${this.application.name} handleFile(${filePath}) (${stats.size} bytes)`)
-    this.updateStatusDataStream({
-      'Last uploaded file': filePath,
-      'Number of files sent since OIBus has started': this.statusData['Number of files sent since OIBus has started'] + 1,
-      'Last upload at': new Date().toISOString(),
-    })
-    return this.postFile(filePath)
+    this.logger.debug(`Handle file "${filePath}" (${stats.size} bytes).`)
+
+    await this.engine.requestService.httpSend(this.fileUrl, 'POST', this.authentication, this.proxy, filePath)
+  }
+
+  /**
+   * Overriding parent method to detect if the connector should retry to send the values/files or discard them
+   * @param {Object} error - The error thrown by the handleFile / handleValue method
+   * @returns {Boolean} - If the values/files must be sent again or not
+   */
+  shouldRetry(error) {
+    if (!error.responseError) {
+      // Error from the library, because the endpoint is not reachable for example. In this case we must retry indefinitely
+      this.logger.trace('Should retry because of connection error.')
+      return true
+    }
+    // Otherwise, check the HTTP status code
+    const retry = [400, 500].includes(error.statusCode)
+    this.logger.trace(`Should retry ${retry} because of error status code: ${error.statusCode}.`)
+    return retry
   }
 }
 

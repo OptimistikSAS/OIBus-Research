@@ -1,6 +1,7 @@
-const fs = require('fs')
-const url = require('url')
-const path = require('path')
+const fs = require('node:fs')
+const url = require('node:url')
+const path = require('node:path')
+
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const { NodeHttpHandler } = require('@aws-sdk/node-http-handler')
 const ProxyAgent = require('proxy-agent')
@@ -14,28 +15,34 @@ class AmazonS3 extends NorthHandler {
   /**
    * Constructor for AmazonS3
    * @constructor
-   * @param {Object} applicationParameters - The application parameters
+   * @param {Object} settings - The North connector settings
    * @param {BaseEngine} engine - The Engine
    * @return {void}
    */
-  constructor(applicationParameters, engine) {
-    super(applicationParameters, engine)
+  constructor(settings, engine) {
+    super(settings, engine)
+    this.canHandleFiles = true
 
-    const { bucket, folder, region, authentication, proxy = null } = applicationParameters.AmazonS3
+    const { bucket, folder, region, authentication, proxy } = settings.AmazonS3
 
     this.bucket = bucket
     this.folder = folder
     this.region = region
+    this.authentication = authentication
+    this.proxy = proxy
+  }
 
-    const configuredProxy = this.getProxy(proxy)
+  async init() {
+    await super.init()
+    const configuredProxy = this.getProxy(this.proxy)
     let httpAgent
     if (configuredProxy) {
-      const { protocol, host, port, username = null, password = null } = configuredProxy
+      const { protocol, host, port, username, password } = configuredProxy
 
       const proxyOptions = url.parse(`${protocol}://${host}:${port}`)
 
       if (username && password) {
-        proxyOptions.auth = `${username}:${this.encryptionService.decryptText(password)}`
+        proxyOptions.auth = `${username}:${await this.encryptionService.decryptText(password)}`
       }
 
       httpAgent = new ProxyAgent(proxyOptions)
@@ -44,8 +51,8 @@ class AmazonS3 extends NorthHandler {
     this.s3 = new S3Client({
       region: this.region,
       credentials: {
-        accessKeyId: authentication.key,
-        secretAccessKey: this.encryptionService.decryptText(authentication.secretKey),
+        accessKeyId: this.authentication.key,
+        secretAccessKey: await this.encryptionService.decryptText(this.authentication.secretKey),
       },
       requestHandler: httpAgent ? new NodeHttpHandler({ httpAgent }) : null,
     })
@@ -54,39 +61,16 @@ class AmazonS3 extends NorthHandler {
   /**
    * Send the file.
    * @param {String} filePath - The path of the file
-   * @return {Promise} - The send status
+   * @returns {Promise<void>} - The result promise
    */
   async handleFile(filePath) {
     const params = {
       Bucket: this.bucket,
       Body: fs.createReadStream(filePath),
-      Key: `${this.folder}/${this.getFilenameWithoutTimestamp(filePath)}`,
+      Key: `${this.folder}/${getFilenameWithoutTimestamp(filePath)}`,
     }
 
-    try {
-      await this.s3.send(new PutObjectCommand(params))
-    } catch (error) {
-      this.logger.error(error)
-      return NorthHandler.STATUS.COMMUNICATION_ERROR
-    }
-    this.updateStatusDataStream({
-      'Last uploaded file': filePath,
-      'Number of files sent since OIBus has started': this.statusData['Number of files sent since OIBus has started'] + 1,
-      'Last upload at': new Date().toISOString(),
-    })
-    return NorthHandler.STATUS.SUCCESS
-  }
-
-  /**
-   * Get filename without timestamp from file path.
-   * @param {string} filePath - The file path
-   * @returns {string} - The filename
-   */
-  /* eslint-disable-next-line class-methods-use-this */
-  getFilenameWithoutTimestamp(filePath) {
-    const { name, ext } = path.parse(filePath)
-    const filename = name.slice(0, name.lastIndexOf('-'))
-    return `${filename}${ext}`
+    await this.s3.send(new PutObjectCommand(params))
   }
 }
 

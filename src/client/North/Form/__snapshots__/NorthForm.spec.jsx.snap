@@ -11,25 +11,20 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
       <div>
         TestConsole
       </div>
-      <button
-        class="util-button btn btn-outline-secondary"
-        type="button"
+      <svg
+        class="oi-icon mx-2"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          class="oi-icon ms-2"
-          fill="currentColor"
-          height="1em"
-          stroke="currentColor"
-          stroke-width="0"
-          viewBox="0 0 512 512"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"
-          />
-        </svg>
-      </button>
+        <path
+          d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"
+        />
+      </svg>
     </h6>
     <div
       class="pull-right me-3"
@@ -116,8 +111,8 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
             </label>
             <input
               class="oi-form-input checkbox form-check-input"
-              id="north.applications.0.enabled"
-              name="north.applications.0.enabled"
+              id="north.0.enabled"
+              name="north.0.enabled"
               type="checkbox"
             />
             <small
@@ -268,15 +263,15 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.consoleLevel"
+              for="north.0.logParameters.consoleLevel"
             >
               Console level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.consoleLevel"
-              name="north.applications.0.logParameters.consoleLevel"
+              id="north.0.logParameters.consoleLevel"
+              name="north.0.logParameters.consoleLevel"
             >
               <option
                 value="engine"
@@ -327,15 +322,15 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.fileLevel"
+              for="north.0.logParameters.fileLevel"
             >
               File level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.fileLevel"
-              name="north.applications.0.logParameters.fileLevel"
+              id="north.0.logParameters.fileLevel"
+              name="north.0.logParameters.fileLevel"
             >
               <option
                 value="engine"
@@ -386,15 +381,15 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.sqliteLevel"
+              for="north.0.logParameters.sqliteLevel"
             >
               Sqlite level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.sqliteLevel"
-              name="north.applications.0.logParameters.sqliteLevel"
+              id="north.0.logParameters.sqliteLevel"
+              name="north.0.logParameters.sqliteLevel"
             >
               <option
                 value="engine"
@@ -512,8 +507,8 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
             </label>
             <input
               class="oi-form-input checkbox form-check-input"
-              id="north.applications.0.Console.verbose"
-              name="north.applications.0.Console.verbose"
+              id="north.0.Console.verbose"
+              name="north.0.Console.verbose"
               type="checkbox"
             />
           </div>
@@ -591,15 +586,15 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.sendInterval"
+              for="north.0.caching.sendInterval"
             >
               Send interval (ms)
             </label>
             <input
               aria-invalid="false"
               class="oi-form-input form-control"
-              id="north.applications.0.caching.sendInterval"
-              name="north.applications.0.caching.sendInterval"
+              id="north.0.caching.sendInterval"
+              name="north.0.caching.sendInterval"
               type="integer"
               value="10000"
             />
@@ -616,17 +611,42 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.retryInterval"
+              for="north.0.caching.retryInterval"
             >
               Retry interval (ms)
             </label>
             <input
               aria-invalid="false"
               class="oi-form-input form-control"
-              id="north.applications.0.caching.retryInterval"
-              name="north.applications.0.caching.retryInterval"
+              id="north.0.caching.retryInterval"
+              name="north.0.caching.retryInterval"
               type="integer"
               value="5000"
+            />
+            <div
+              class="invalid-feedback"
+            />
+          </div>
+        </div>
+        <div
+          class="col-md-4"
+        >
+          <div
+            class="mb-3"
+          >
+            <label
+              class="form-label"
+              for="north.0.caching.retryCount"
+            >
+              Retry count
+            </label>
+            <input
+              aria-invalid="false"
+              class="oi-form-input form-control"
+              id="north.0.caching.retryCount"
+              name="north.0.caching.retryCount"
+              type="integer"
+              value=""
             />
             <div
               class="invalid-feedback"
@@ -645,15 +665,15 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.groupCount"
+              for="north.0.caching.groupCount"
             >
               Group count
             </label>
             <input
               aria-invalid="false"
               class="oi-form-input form-control"
-              id="north.applications.0.caching.groupCount"
-              name="north.applications.0.caching.groupCount"
+              id="north.0.caching.groupCount"
+              name="north.0.caching.groupCount"
               type="integer"
               value="1"
             />
@@ -670,21 +690,84 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.maxSendCount"
+              for="north.0.caching.maxSendCount"
             >
               Max group count
             </label>
             <input
               aria-invalid="false"
               class="oi-form-input form-control"
-              id="north.applications.0.caching.maxSendCount"
-              name="north.applications.0.caching.maxSendCount"
+              id="north.0.caching.maxSendCount"
+              name="north.0.caching.maxSendCount"
               type="integer"
               value="10000"
             />
             <div
               class="invalid-feedback"
             />
+          </div>
+        </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-2"
+        >
+          <div
+            class="mb-3 form-check form-switch"
+          >
+            <label
+              class="form-check-label"
+            >
+              Archive mode activated
+            </label>
+            <input
+              checked=""
+              class="oi-form-input checkbox form-check-input"
+              id="north.0.caching.archive.enabled"
+              name="north.0.caching.archive.enabled"
+              type="checkbox"
+            />
+            <small
+              class="form-text text-muted"
+            >
+              <div>
+                Move to archive folder or delete files when they are sent
+              </div>
+            </small>
+          </div>
+        </div>
+        <div
+          class="col-md-2"
+        >
+          <div
+            class="mb-3"
+          >
+            <label
+              class="form-label"
+              for="north.0.caching.archive.retentionDuration"
+            >
+              Retention duration
+            </label>
+            <input
+              aria-invalid="false"
+              class="oi-form-input form-control"
+              id="north.0.caching.archive.retentionDuration"
+              name="north.0.caching.archive.retentionDuration"
+              type="integer"
+              value="720"
+            />
+            <div
+              class="invalid-feedback"
+            />
+            <small
+              class="form-text text-muted"
+            >
+              <div>
+                Retention period of archived files (in hours)
+              </div>
+            </small>
           </div>
         </div>
       </div>
@@ -750,7 +833,7 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -806,7 +889,7 @@ exports[`NorthForm check NorthForm with application: TestConsole 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -841,25 +924,20 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
       <div>
         emptyApplication
       </div>
-      <button
-        class="util-button btn btn-outline-secondary"
-        type="button"
+      <svg
+        class="oi-icon mx-2"
+        fill="currentColor"
+        height="1em"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 512 512"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          class="oi-icon ms-2"
-          fill="currentColor"
-          height="1em"
-          stroke="currentColor"
-          stroke-width="0"
-          viewBox="0 0 512 512"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"
-          />
-        </svg>
-      </button>
+        <path
+          d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"
+        />
+      </svg>
     </h6>
     <div
       class="pull-right me-3"
@@ -1075,15 +1153,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.consoleLevel"
+              for="north.0.logParameters.consoleLevel"
             >
               Console level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.consoleLevel"
-              name="north.applications.0.logParameters.consoleLevel"
+              id="north.0.logParameters.consoleLevel"
+              name="north.0.logParameters.consoleLevel"
             >
               <option
                 value="engine"
@@ -1134,15 +1212,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.fileLevel"
+              for="north.0.logParameters.fileLevel"
             >
               File level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.fileLevel"
-              name="north.applications.0.logParameters.fileLevel"
+              id="north.0.logParameters.fileLevel"
+              name="north.0.logParameters.fileLevel"
             >
               <option
                 value="engine"
@@ -1193,15 +1271,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.logParameters.sqliteLevel"
+              for="north.0.logParameters.sqliteLevel"
             >
               Sqlite level
             </label>
             <select
               aria-invalid="false"
               class="oi-form-input form-select"
-              id="north.applications.0.logParameters.sqliteLevel"
-              name="north.applications.0.logParameters.sqliteLevel"
+              id="north.0.logParameters.sqliteLevel"
+              name="north.0.logParameters.sqliteLevel"
             >
               <option
                 value="engine"
@@ -1382,15 +1460,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.sendInterval"
+              for="north.0.caching.sendInterval"
             >
               Send interval (ms)
             </label>
             <input
               aria-invalid="true"
               class="oi-form-input is-invalid form-control"
-              id="north.applications.0.caching.sendInterval"
-              name="north.applications.0.caching.sendInterval"
+              id="north.0.caching.sendInterval"
+              name="north.0.caching.sendInterval"
               type="integer"
               value=""
             />
@@ -1409,15 +1487,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.retryInterval"
+              for="north.0.caching.retryInterval"
             >
               Retry interval (ms)
             </label>
             <input
               aria-invalid="true"
               class="oi-form-input is-invalid form-control"
-              id="north.applications.0.caching.retryInterval"
-              name="north.applications.0.caching.retryInterval"
+              id="north.0.caching.retryInterval"
+              name="north.0.caching.retryInterval"
               type="integer"
               value=""
             />
@@ -1426,6 +1504,31 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
             >
               Retry interval should be greater or equal to 1000
             </div>
+          </div>
+        </div>
+        <div
+          class="col-md-4"
+        >
+          <div
+            class="mb-3"
+          >
+            <label
+              class="form-label"
+              for="north.0.caching.retryCount"
+            >
+              Retry count
+            </label>
+            <input
+              aria-invalid="false"
+              class="oi-form-input form-control"
+              id="north.0.caching.retryCount"
+              name="north.0.caching.retryCount"
+              type="integer"
+              value=""
+            />
+            <div
+              class="invalid-feedback"
+            />
           </div>
         </div>
       </div>
@@ -1440,15 +1543,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.groupCount"
+              for="north.0.caching.groupCount"
             >
               Group count
             </label>
             <input
               aria-invalid="true"
               class="oi-form-input is-invalid form-control"
-              id="north.applications.0.caching.groupCount"
-              name="north.applications.0.caching.groupCount"
+              id="north.0.caching.groupCount"
+              name="north.0.caching.groupCount"
               type="integer"
               value=""
             />
@@ -1467,15 +1570,15 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
           >
             <label
               class="form-label"
-              for="north.applications.0.caching.maxSendCount"
+              for="north.0.caching.maxSendCount"
             >
               Max group count
             </label>
             <input
               aria-invalid="true"
               class="oi-form-input is-invalid form-control"
-              id="north.applications.0.caching.maxSendCount"
-              name="north.applications.0.caching.maxSendCount"
+              id="north.0.caching.maxSendCount"
+              name="north.0.caching.maxSendCount"
               type="integer"
               value=""
             />
@@ -1486,6 +1589,13 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
             </div>
           </div>
         </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="col-md-2"
+        />
       </div>
       <div
         class="row"
@@ -1549,7 +1659,7 @@ exports[`NorthForm check NorthForm with empty application 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"

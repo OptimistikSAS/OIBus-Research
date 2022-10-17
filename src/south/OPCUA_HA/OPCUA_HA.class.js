@@ -22,12 +22,12 @@ class OPCUA_HA extends SouthHandler {
   /**
    * Constructor for OPCUA_HA
    * @constructor
-   * @param {Object} dataSource - The data source
-   * @param {BaseEngine} engine - The engine
+   * @param {Object} settings - The South connector settings
+   * @param {BaseEngine} engine - The Engine
    * @return {void}
    */
-  constructor(dataSource, engine) {
-    super(dataSource, engine)
+  constructor(settings, engine) {
+    super(settings, engine)
 
     const {
       url,
@@ -43,7 +43,7 @@ class OPCUA_HA extends SouthHandler {
       keepSessionAlive,
       certFile,
       keyFile,
-    } = dataSource.OPCUA_HA
+    } = this.settings.OPCUA_HA
 
     this.url = url
     this.username = username
@@ -55,24 +55,30 @@ class OPCUA_HA extends SouthHandler {
     this.readTimeout = readTimeout
     this.securityMode = securityMode
     this.securityPolicy = securityPolicy
-    this.clientName = dataSource.id
+    this.clientName = settings.id
     this.keepSessionAlive = keepSessionAlive
     this.certFile = certFile
     this.keyFile = keyFile
-    this.reconnectTimeout = null
+
+    // Initialized at connection
     this.clientCertificateManager = null
+    this.reconnectTimeout = null
+    this.session = null
   }
 
   /**
-   * Connect.
-   * @return {Promise<void>} The connection promise
+   * Connect to the OPCUA server.
+   * @returns {Promise<void>} - The result promise
    */
   async connect() {
-    await super.connect()
     await this.session?.close() // close the session if it already exists
     await this.connectToOpcuaServer()
   }
 
+  /**
+   * Initialize services (logger, certificate, status data)
+   * @returns {Promise<void>} - The result promise
+   */
   async init() {
     await super.init()
     await initOpcuaCertificateFolders(this.encryptionService.certsFolder)
@@ -88,14 +94,14 @@ class OPCUA_HA extends SouthHandler {
   }
 
   /**
-   * manageDataValues
-   * @param {array} dataValues - the list of values
-   * @param {Array} nodesToRead - the list of nodes
-   * @param {Date} opcStartTime - the start time of the period
-   * @param {String} scanMode - the current scanMode
-   * @return {Promise<void>} The connection promise
+   * Format values and send them to the cache
+   * @param {Object[]} dataValues - The list of values
+   * @param {Object[]} nodesToRead - The list of nodes
+   * @param {Date} opcStartTime - The start time of the period
+   * @param {String} scanMode - The current scanMode
+   * @return {Promise<void>} The resolved promise
    */
-  manageDataValues = async (dataValues, nodesToRead, opcStartTime, scanMode) => {
+  formatAndSendValues = async (dataValues, nodesToRead, opcStartTime, scanMode) => {
     const values = []
     let maxTimestamp = opcStartTime.getTime()
     dataValues.forEach((dataValue, i) => {
@@ -107,36 +113,98 @@ class OPCUA_HA extends SouthHandler {
         return selectedTimestamp.getTime() >= opcStartTime.getTime()
       })
       if (newerValues.length < dataValue.length) {
-        this.logger.debug(`Received ${newerValues.length} new values for ${nodesToRead[i].pointId} among ${dataValue.length} values retrieved`)
+        this.logger.debug(`Received ${newerValues.length} new values for ${nodesToRead[i].pointId} among ${dataValue.length} values retrieved.`)
       }
-      values.push(...newerValues.map((value) => {
-        const selectedTimestamp = value.sourceTimestamp ?? value.serverTimestamp
+      values.push(...newerValues.map((opcuaValue) => {
+        const selectedTimestamp = opcuaValue.sourceTimestamp ?? opcuaValue.serverTimestamp
         const selectedTime = selectedTimestamp.getTime()
         maxTimestamp = selectedTime > maxTimestamp ? selectedTime : maxTimestamp
         return {
           pointId: nodesToRead[i].pointId,
           timestamp: selectedTimestamp.toISOString(),
           data: {
-            value: value.value.value,
-            quality: JSON.stringify(value.statusCode),
+            value: opcuaValue.value.value,
+            quality: JSON.stringify(opcuaValue.statusCode),
           },
         }
       }))
     })
     if (values.length > 0) {
-      // send the packet immediately to the engine
-      this.addValues(values)
+      await this.addValues(values)
       this.lastCompletedAt[scanMode] = new Date(maxTimestamp + 1)
-      await this.setConfig(`lastCompletedAt-${scanMode}`, this.lastCompletedAt[scanMode].toISOString())
-      this.logger.debug(`Updated lastCompletedAt for ${scanMode} to ${this.lastCompletedAt[scanMode]}`)
+      this.setConfig(`lastCompletedAt-${scanMode}`, this.lastCompletedAt[scanMode].toISOString())
+      this.logger.debug(`Updated lastCompletedAt for "${scanMode}" to ${this.lastCompletedAt[scanMode].toISOString()}.`)
     } else {
-      this.logger.debug(`No value for ${scanMode}`)
+      this.logger.debug(`No value retrieved for "${scanMode}".`)
     }
   }
 
+  /**
+   * Send a read query to the OPCUA server for a list of nodes
+   *
+   *       Below are two example of responses
+   *       1- With OPCUA_HA WINCC
+   *         [
+   *           {
+   *             "statusCode": { "value": 0 },
+   *             "historyData": {
+   *               "dataValues": [
+   *                 {
+   *                   "value": { "dataType": "Double", "arrayType": "Scalar", "value": 300},
+   *                   "statusCode": {
+   *                     "value": 1024
+   *                   },
+   *                   "sourceTimestamp": "2020-10-31T14:11:20.238Z",
+   *                   "sourcePicoseconds": 0,
+   *                   "serverPicoseconds": 0
+   *                 },
+   *                 {"value": { "dataType": "Double", "arrayType": "Scalar", "value": 300},
+   *                   "statusCode": {
+   *                     "value": 1024
+   *                   },
+   *                   "sourceTimestamp": "2020-10-31T14:11:21.238Z",
+   *                   "sourcePicoseconds": 0,
+   *                   "serverPicoseconds": 0
+   *                 }
+   *               ]
+   *             }
+   *           }
+   *         ]
+   *         2/ With OPCUA_HA MATRIKON
+   *         [
+   *           {
+   *             "statusCode": {"value": 0},
+   *             "historyData": {
+   *               "dataValues": [
+   *                 {
+   *                   "value": { "dataType": "Double", "arrayType": "Scalar", "value": -0.927561841177095 },
+   *                   "statusCode": { "value": 0 },
+   *                   "sourceTimestamp": "2020-10-31T14:23:01.000Z",
+   *                   "sourcePicoseconds": 0,
+   *                   "serverTimestamp": "2020-10-31T14:23:01.000Z",
+   *                   "serverPicoseconds": 0
+   *                 },
+   *                 {
+   *                   "value": {"dataType": "Double", "arrayType": "Scalar","value": 0.10154855112346262},
+   *                   "statusCode": {"value": 0},
+   *                   "sourceTimestamp": "2020-10-31T14:23:02.000Z",
+   *                   "sourcePicoseconds": 0,
+   *                   "serverTimestamp": "2020-10-31T14:23:02.000Z",
+   *                   "serverPicoseconds": 0
+   *                 }
+   *               ]
+   *             }
+   *           }
+   *         ]
+   *
+   * @param {Object[]} nodes - The nodes to read on the OPCUA server
+   * @param {Date} startTime - The start time
+   * @param {Date} endTime - The end time
+   * @param {Object} options - The read options
+   * @returns {Promise<[][]>} - The list of values for each node
+   */
   async readHistoryValue(nodes, startTime, endTime, options) {
-    this.logger.trace(`Reading ${nodes.length} with options ${JSON.stringify(options)}`)
-    const numValuesPerNode = options?.numValuesPerNode ?? 0
+    this.logger.trace(`Reading ${nodes.length} with options "${JSON.stringify(options)}".`)
     let nodesToRead = nodes.map((node) => ({
       continuationPoint: null,
       dataEncoding: undefined,
@@ -148,25 +216,25 @@ class OPCUA_HA extends SouthHandler {
     const logs = {}
     const dataValues = [[]]
     do {
-      if (options?.aggregateFn) {
+      if (options.aggregateFn) {
         if (!options.processingInterval) {
-          this.logger.error(`Option aggregateFn ${options.aggregateFn} without processingInterval`)
+          this.logger.error(`Option aggregateFn "${options.aggregateFn}" without processingInterval.`)
         }
-        // we use the same aggregate for all nodes (OPCUA allows to have a different one for each)
+        // We use the same aggregate for all nodes (OPCUA allows to have a different one for each)
         const aggregateType = Array(nodesToRead.length).fill(options.aggregateFn)
         historyReadDetails = new ReadProcessedDetails({
-          aggregateType,
-          endTime,
-          processingInterval: options.processingInterval,
           startTime,
+          endTime,
+          aggregateType,
+          processingInterval: options.processingInterval,
         })
       } else {
         historyReadDetails = new ReadRawModifiedDetails({
-          endTime,
-          isReadModified: false,
-          numValuesPerNode,
-          returnBounds: false,
           startTime,
+          endTime,
+          numValuesPerNode: options.numValuesPerNode,
+          isReadModified: false,
+          returnBounds: false,
         })
       }
       const request = new HistoryReadRequest({
@@ -175,43 +243,50 @@ class OPCUA_HA extends SouthHandler {
         releaseContinuationPoints: false,
         timestampsToReturn: TimestampsToReturn.Both,
       })
-      if (options?.timeout) request.requestHeader.timeoutHint = options.timeout
+      if (options.timeout) request.requestHeader.timeoutHint = options.timeout
+
       // eslint-disable-next-line no-await-in-loop
       const response = await this.session.performMessageTransaction(request)
-      if (response?.responseHeader.serviceResult.isNot(StatusCodes.Good)) {
-        this.logger.error(new Error(response.responseHeader.serviceResult.toString()))
+      if (response.responseHeader.serviceResult.isNot(StatusCodes.Good)) {
+        this.logger.error(`Error while reading history: ${response.responseHeader.serviceResult.description}`)
       }
-      if (response?.results) {
-        this.logger.debug(`Received a response of size ${response?.results?.length}`)
-      }
-      // eslint-disable-next-line no-loop-func
-      response?.results?.forEach((result, i) => {
-        /* eslint-disable no-underscore-dangle */
-        this.logger.trace(`Result ${i} for node ${nodesToRead[i].nodeId} contains ${result.historyData?.dataValues.length}
-        values and has status code ${result.statusCode._description}, continuation point is ${result.continuationPoint}`)
-        if (!dataValues[i]) dataValues.push([])
-        dataValues[i].push(...result.historyData?.dataValues ?? [])
-        /**
-         * Reason of statusCode not equal to zero could be there is no data for the requested data and interval
-         */
-        if (result.statusCode.value !== 0) {
-          if (!logs[result.statusCode.value]) {
-            logs[result.statusCode.value] = {
-              // eslint-disable-next-line no-underscore-dangle
-              description: result.statusCode._description,
-              affectedNodes: [nodesToRead[i].nodeId],
-            }
-          } else {
-            logs[result.statusCode.value].affectedNodes.push(nodesToRead[i].nodeId)
+
+      if (response.results) {
+        this.logger.debug(`Received a response of ${response.results.length} nodes.`)
+        nodesToRead = nodesToRead.map((node, i) => {
+          if (!dataValues[i]) dataValues.push([])
+          const result = response.results[i]
+          if (result.historyData?.dataValues) {
+            this.logger.trace(`Result for node "${node.nodeId}" (number ${i}) contains `
+              + `${result.historyData.dataValues.length} values and has status code `
+              + `${JSON.stringify(result.statusCode.value)}, continuation point is ${result.continuationPoint}.`)
+            dataValues[i].push(...result.historyData.dataValues)
           }
-        }
-        nodesToRead[i].continuationPoint = result.continuationPoint
-      })
-      // remove points fully retrieved
-      nodesToRead = nodesToRead.filter((node) => !!node.continuationPoint)
-      this.logger.trace(`Continue read for ${nodesToRead.length} points`)
+
+          // Reason of statusCode not equal to zero could be there is no data for the requested data and interval
+          if (result.statusCode.value !== StatusCodes.Good) {
+            if (!logs[result.statusCode.value]) {
+              logs[result.statusCode.value] = {
+                description: result.statusCode.description,
+                affectedNodes: [node.nodeId],
+              }
+            } else {
+              logs[result.statusCode.value].affectedNodes.push(node.nodeId)
+            }
+          }
+          return {
+            ...node,
+            continuationPoint: result.continuationPoint,
+          }
+        })
+          .filter((node) => !!node.continuationPoint)
+        this.logger.trace(`Continue read for ${nodesToRead.length} points.`)
+      } else {
+        this.logger.error('No result found in response.')
+      }
     } while (nodesToRead.length)
-    // if all is retrieved, clean continuation points
+
+    // If all is retrieved, clean continuation points
     nodesToRead = nodes.map((node) => ({
       continuationPoint: null,
       dataEncoding: undefined,
@@ -225,19 +300,18 @@ class OPCUA_HA extends SouthHandler {
       timestampsToReturn: TimestampsToReturn.Both,
     }))
 
-    if (response.responseHeader.serviceResult._value !== 0) {
-      this.logger.error(`Error while releasing continuation points: ${response.responseHeader.serviceResult._description}`)
+    if (response.responseHeader.serviceResult.isNot(StatusCodes.Good)) {
+      this.logger.error(`Error while releasing continuation points: ${response.responseHeader.serviceResult.description}`)
     }
 
     Object.keys(logs).forEach((statusCode) => {
       switch (statusCode) {
-        case StatusCodes.BadIndexRangeNoData: // No data exists for the requested time range or event filter.
         default:
           if (logs[statusCode].affectedNodes.length > MAX_NUMBER_OF_NODE_TO_LOG) {
-            this.logger.debug(`${logs[statusCode].description} (${statusCode}): [${
+            this.logger.debug(`${logs[statusCode].description} with status code ${statusCode}: [${
               logs[statusCode].affectedNodes[0]}..${logs[statusCode].affectedNodes[logs[statusCode].affectedNodes.length - 1]}]`)
           } else {
-            this.logger.debug(`${logs[statusCode].description} (${statusCode}): [${logs[statusCode].affectedNodes.toString()}]`)
+            this.logger.debug(`${logs[statusCode].description} with status code ${statusCode}: [${logs[statusCode].affectedNodes.toString()}]`)
           }
           break
       }
@@ -246,18 +320,19 @@ class OPCUA_HA extends SouthHandler {
   }
 
   /**
-   * On scan.
+   * Get values from the OPCUA server between startTime and endTime and write them into the cache.
    * @param {String} scanMode - The scan mode
    * @param {Date} startTime - The start time
    * @param {Date} endTime - The end time
-   * @return {Promise<number>} - The on scan promise: -1 if an error occurred, 0 otherwise
+   * @returns {Promise<void>} - The result promise
    */
   async historyQuery(scanMode, startTime, endTime) {
     const scanGroup = this.scanGroups.find((item) => item.scanMode === scanMode)
     try {
       const nodesToRead = scanGroup.points.map((point) => point)
-      // eslint-disable-next-line max-len
-      this.logger.debug(`Read from ${startTime.toISOString()} to ${endTime.toISOString()} (${endTime - startTime}ms) ${nodesToRead.length} nodes [${nodesToRead[0].nodeId}...${nodesToRead[nodesToRead.length - 1].nodeId}]`)
+      this.logger.debug(`Read from ${startTime.toISOString()} to ${endTime.toISOString()} `
+              + `(${endTime - startTime}ms) ${nodesToRead.length} nodes `
+              + `[${nodesToRead[0].nodeId}...${nodesToRead[nodesToRead.length - 1].nodeId}]`)
       const options = {
         timeout: this.readTimeout,
         numValuesPerNode: this.maxReturnValues,
@@ -284,7 +359,7 @@ class OPCUA_HA extends SouthHandler {
         case 'None':
           break
         default:
-          this.logger.error(`Unsupported resampling: ${scanGroup.resampling}`)
+          this.logger.error(`Unsupported resampling: "${scanGroup.resampling}".`)
       }
       switch (scanGroup.aggregate) {
         case 'Average':
@@ -302,84 +377,26 @@ class OPCUA_HA extends SouthHandler {
         case 'Raw':
           break
         default:
-          this.logger.error(`Unsupported aggregate: ${scanGroup.aggregate}`)
+          this.logger.error(`Unsupported aggregate: "${scanGroup.aggregate}".`)
       }
 
       const dataValues = await this.readHistoryValue(nodesToRead, startTime, endTime, options)
-      /*
-      Below are two example of responses
-      1- With OPCUA_HA WINCC
-        [
-          {
-            "statusCode": { "value": 0 },
-            "historyData": {
-              "dataValues": [
-                {
-                  "value": { "dataType": "Double", "arrayType": "Scalar", "value": 300},
-                  "statusCode": {
-                    "value": 1024
-                  },
-                  "sourceTimestamp": "2020-10-31T14:11:20.238Z",
-                  "sourcePicoseconds": 0,
-                  "serverPicoseconds": 0
-                },
-                {"value": { "dataType": "Double", "arrayType": "Scalar", "value": 300},
-                  "statusCode": {
-                    "value": 1024
-                  },
-                  "sourceTimestamp": "2020-10-31T14:11:21.238Z",
-                  "sourcePicoseconds": 0,
-                  "serverPicoseconds": 0
-                }
-              ]
-            }
-          }
-        ]
-        2/ With OPCUA_HA MATRIKON
-        [
-          {
-            "statusCode": {"value": 0},
-            "historyData": {
-              "dataValues": [
-                {
-                  "value": { "dataType": "Double", "arrayType": "Scalar", "value": -0.927561841177095 },
-                  "statusCode": { "value": 0 },
-                  "sourceTimestamp": "2020-10-31T14:23:01.000Z",
-                  "sourcePicoseconds": 0,
-                  "serverTimestamp": "2020-10-31T14:23:01.000Z",
-                  "serverPicoseconds": 0
-                },
-                {
-                  "value": {"dataType": "Double", "arrayType": "Scalar","value": 0.10154855112346262},
-                  "statusCode": {"value": 0},
-                  "sourceTimestamp": "2020-10-31T14:23:02.000Z",
-                  "sourcePicoseconds": 0,
-                  "serverTimestamp": "2020-10-31T14:23:02.000Z",
-                  "serverPicoseconds": 0
-                }
-              ]
-            }
-          }
-        ]
-      */
+
       if (dataValues.length !== nodesToRead.length) {
-        this.logger.error(`Received ${dataValues.length} data values, requested ${nodesToRead.length} nodes`)
+        this.logger.error(`Received ${dataValues.length} data values, requested ${nodesToRead.length} nodes.`)
       }
 
-      await this.manageDataValues(dataValues, nodesToRead, startTime, scanMode)
+      await this.formatAndSendValues(dataValues, nodesToRead, startTime, scanMode)
     } catch (error) {
-      this.logger.error(`on Scan ${scanMode}:${error.stack}`)
       await this.disconnect()
-      this.initializeStatusData()
       await this.connect()
-      return -1
+      throw error
     }
-    return 0
   }
 
   /**
    * Close the connection
-   * @return {void}
+   * @returns {Promise<void>} - The result promise
    */
   async disconnect() {
     if (this.reconnectTimeout) {
@@ -395,11 +412,10 @@ class OPCUA_HA extends SouthHandler {
 
   /**
    * Connect to OPCUA_HA server with retry.
-   * @returns {Promise<void>} - The connection promise
+   * @returns {Promise<void>} - The result promise
    */
   async connectToOpcuaServer() {
     try {
-      // define OPCUA_HA connection parameters
       const connectionStrategy = {
         initialDelay: 1000,
         maxRetry: 1,
@@ -427,15 +443,14 @@ class OPCUA_HA extends SouthHandler {
         userIdentity = {
           type: UserTokenType.UserName,
           userName: this.username,
-          password: this.encryptionService.decryptText(this.password),
+          password: await this.encryptionService.decryptText(this.password),
         }
       } else {
         userIdentity = { type: UserTokenType.Anonymous }
       }
       this.session = await OPCUAClient.createSession(this.url, userIdentity, options)
-      this.connected = true
-      this.logger.info(`OPCUA_HA ${this.dataSource.name} connected`)
-      this.updateStatusDataStream({ 'Connected at': new Date().toISOString() })
+      this.logger.info(`OPCUA_HA ${this.settings.name} connected`)
+      await super.connect()
     } catch (error) {
       this.logger.error(error)
       await this.disconnect()

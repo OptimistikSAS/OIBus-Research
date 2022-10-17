@@ -10,14 +10,12 @@ exports[`EditableIdField check EditableIdField editing = false 1`] = `
 
 exports[`EditableIdField check EditableIdField editing = true 1`] = `
 <div>
-  <button
-    class="util-button btn btn-outline-secondary"
-    type="button"
-  >
+  <div>
     <svg
-      class="oi-icon ms-2"
+      class="oi-icon mx-2"
       fill="currentColor"
       height="1em"
+      id="save-icon"
       stroke="currentColor"
       stroke-width="0"
       viewBox="0 0 512 512"
@@ -28,20 +26,18 @@ exports[`EditableIdField check EditableIdField editing = true 1`] = `
         d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"
       />
     </svg>
-  </button>
+  </div>
 </div>
 `;
 
 exports[`EditableIdField check editing done 1`] = `
 <div>
-  <button
-    class="util-button btn btn-outline-secondary"
-    type="button"
-  >
+  <div>
     <svg
-      class="oi-icon ms-2"
+      class="oi-icon mx-2"
       fill="currentColor"
       height="1em"
+      id="save-icon"
       stroke="currentColor"
       stroke-width="0"
       viewBox="0 0 512 512"
@@ -52,20 +48,18 @@ exports[`EditableIdField check editing done 1`] = `
         d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"
       />
     </svg>
-  </button>
+  </div>
 </div>
 `;
 
 exports[`EditableIdField check editing done with error 1`] = `
 <div>
-  <button
-    class="util-button btn btn-outline-secondary"
-    type="button"
-  >
+  <div>
     <svg
-      class="oi-icon ms-2"
+      class="oi-icon mx-2"
       fill="currentColor"
       height="1em"
+      id="save-icon"
       stroke="currentColor"
       stroke-width="0"
       viewBox="0 0 512 512"
@@ -76,6 +70,6 @@ exports[`EditableIdField check editing done with error 1`] = `
         d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"
       />
     </svg>
-  </button>
+  </div>
 </div>
 `;

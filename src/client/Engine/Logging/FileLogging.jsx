@@ -11,14 +11,6 @@ schema.form = {
     defaultValue: 'info',
     help: <div>The level for the File log</div>,
   },
-  fileName: {
-    type: 'OIbText',
-    label: 'File name for the log file',
-    valid: 'notEmpty',
-    defaultValue: '',
-    md: 4,
-    help: <div>The file name of the log file</div>,
-  },
   maxSize: {
     type: 'OIbInteger',
     newRow: false,

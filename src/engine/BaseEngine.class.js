@@ -1,3 +1,5 @@
+const path = require('node:path')
+
 const VERSION = require('../../package.json').version
 // the generic class need to be imported to be used by extensions
 global.NorthHandler = require('../north/NorthHandler.class')
@@ -5,30 +7,35 @@ global.SouthHandler = require('../south/SouthHandler.class')
 // BaseEngine classes
 const Logger = require('./logger/Logger.class')
 const { createRequestService } = require('../services/request')
+const StatusService = require('../services/status.service.class')
 
 /**
- *
- * at startup, handles initialization of applications, protocols and config.
+ * Abstract class used to manage North and South connectors
  * @class BaseEngine
  */
 class BaseEngine {
   /**
    * Constructor for BaseEngine
-   * Reads the config file and create the corresponding Object.
-   * Makes the necessary changes to the pointId attributes.
-   * Checks for critical entries such as scanModes and data sources.
    * @constructor
    * @param {ConfigService} configService - The config service
    * @param {EncryptionService} encryptionService - The encryption service
+   * @param {String} cacheFolder - The base cache folder used by the engine and its connectors
+   * @return {void}
    */
-  constructor(configService, encryptionService) {
+  constructor(configService, encryptionService, cacheFolder) {
     this.version = VERSION
+    this.cacheFolder = path.resolve(cacheFolder)
 
-    this.eventEmitters = {}
-    this.statusData = {}
+    this.installedNorthConnectors = apiList
+    this.installedSouthConnectors = protocolList
 
     this.configService = configService
     this.encryptionService = encryptionService
+
+    // Variable initialized in initEngineServices
+    this.statusService = null
+    this.logger = null
+    this.requestService = null
     this.northSchemas = {}
     this.southSchemas = {}
     this.northModules = {}
@@ -37,11 +44,12 @@ class BaseEngine {
 
   /**
    * Method used to init async services (like logger when loki is used with Bearer token auth)
-   * @param {object} engineConfig - the config retrieved from the file
-   * @param {string} loggerScope - the scope used in the logger (for example 'OIBusEngine')
-   * @returns {Promise<void>} - The promise returns when the services are set
+   * @param {Object} engineConfig - the config retrieved from the file
+   * @param {String} loggerScope - the scope used in the logger (for example 'OIBusEngine')
+   * @returns {Promise<void>} - The result promise
    */
   async initEngineServices(engineConfig, loggerScope) {
+    this.statusService = new StatusService()
     // Configure the logger
     this.logger = new Logger(loggerScope)
     this.logger.setEncryptionService(this.encryptionService)
@@ -69,56 +77,69 @@ class BaseEngine {
       }
     }))
 
+    // Buffer delay in ms: when a South connector generates a lot of values at the same time, it may be better to accumulate them
+    // in a buffer before sending them to the engine
+    // Max buffer: if the buffer reaches this length, it will be sent to the engine immediately
+    // these parameters could be settings from OIBus UI
+    this.bufferMax = engineConfig.caching.bufferMax
+    this.bufferTimeoutInterval = engineConfig.caching.bufferTimeoutInterval
+
+    // Buffer delay in ms: when a South connector generates a lot of values at the same time, it may be better to accumulate them
+    // in a buffer before sending them to the engine
+    // Max buffer: if the buffer reaches this length, it will be sent to the engine immediately
+    // these parameters could be settings from OIBus UI
+    this.bufferMax = engineConfig.caching.bufferMax
+    this.bufferTimeoutInterval = engineConfig.caching.bufferTimeoutInterval
+
     // Request service
     this.requestService = createRequestService(this)
   }
 
   /**
-   * Add a new Value from a data source to the BaseEngine.
-   * The BaseEngine will forward the Value to the Cache.
-   * @param {string} dataSourceId - The South generating the value
-   * @param {object} values - array of values
-   * @return {void}
+   * Add new values from a South connector to the Engine.
+   * The Engine will forward the values to the Cache.
+   * @param {String} id - The South connector id
+   * @param {Object[]} values - Array of values
+   * @returns {Promise<void>} - The result promise
    */
-  async addValues(dataSourceId, values) {
-    this.logger.warn(`addValues() should be surcharged ${dataSourceId} ${values}`)
+  async addValues(id, values) {
+    this.logger.warn(`addValues() should be surcharged. Called with South "${id}" and ${values.length} values.`)
   }
 
   /**
-   * Add a new File from an data source to the BaseEngine.
-   * The BaseEngine will forward the File to the Cache.
-   * @param {string} dataSourceId - The South generating the file
-   * @param {string} filePath - The path to the File
-   * @param {boolean} preserveFiles - Whether to preserve the file at the original location
-   * @return {void}
+   * Add a new file from a South connector to the Engine.
+   * The Engine will forward the file to the Cache.
+   * @param {String} id - The South connector id
+   * @param {String} filePath - The path to the file
+   * @param {Boolean} preserveFiles - Whether to preserve the file at the original location
+   * @returns {Promise<void>} - The result promise
    */
-  addFile(dataSourceId, filePath, preserveFiles) {
-    this.logger.warn(`addFile() should be surcharged ${dataSourceId} ${filePath} ${preserveFiles}`)
+  async addFile(id, filePath, preserveFiles) {
+    this.logger.warn(`addFile() should be surcharged. Called with South "${id}", file "${filePath}" and ${preserveFiles}.`)
   }
 
   /**
-   * Creates a new instance for every application and protocol and connects them.
+   * Creates a new instance for every North and South connectors and initialize them.
    * Creates CronJobs based on the ScanModes and starts them.
-   *
-   * @param {boolean} safeMode - Whether to start in safe mode
-   * @return {void}
+   * @param {Boolean} safeMode - Whether to start in safe mode
+   * @returns {Promise<void>} - The result promise
    */
   async start(safeMode = false) {
-    this.logger.warn(`start() should be surcharged ${safeMode}`)
+    this.logger.warn(`start() should be surcharged. Called with safe mode ${safeMode}.`)
   }
 
   /**
-   * Gracefully stop every Timer, Protocol and Application
-   * @return {Promise<void>} - The stop promise
+   * Gracefully stop every timer, South and North connectors
+   * @returns {Promise<void>} - The result promise
    */
   async stop() {
-    this.logger.warn('stop() should be surcharged')
+    this.logger.warn('stop() should be surcharged.')
   }
 
   /**
-   * Restart BaseEngine.
-   * @param {number} timeout - The delay to wait before restart
-   * @returns {void}
+   * Return the South connector
+   * @param {Object} southConfig - The South connector settings
+   * @returns {SouthConnector|null} - The South connector
    */
   async reload(timeout) {
     this.logger.warn(`reload() should be surcharged ${timeout}`)
@@ -154,10 +175,10 @@ class BaseEngine {
    *
    * @param {string} protocol - The protocol
    * @param {object} dataSource - The data source
-   * @returns {SouthHandler|null} - The South
+   * @returns {ProtocolHandler|null} - The South
    */
   createSouth(protocol, dataSource) {
-    const SouthHandler = this.southModules[protocol]
+    const SouthHandler = protocolList[protocol]
     if (SouthHandler) {
       return new SouthHandler(dataSource, this)
     }

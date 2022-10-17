@@ -1,292 +1,289 @@
+const net = require('node:net')
+const path = require('node:path')
+const Stream = require('node:stream')
+
 const Modbus = require('./Modbus.class')
-const { defaultConfig: config } = require('../../../tests/testConfig')
+
 const databaseService = require('../../services/database.service')
+const utils = require('./utils')
+
+const { defaultConfig: config } = require('../../../tests/testConfig')
 
 // Mock jsmobdus
 jest.mock('jsmodbus', () => ({ client: { TCP: jest.fn() } }))
 
-// Mock database service
-jest.mock('../../services/database.service', () => ({
-  createConfigDatabase: jest.fn(() => 'configDatabase'),
-  getConfig: jest.fn((_database, _key) => '1587640141001.0'),
-  upsertConfig: jest.fn(),
-}))
+// Mock net library used for Socket
+jest.mock('node:net')
 
-jest.mock('net', () => {
-  class Socket {
-    // eslint-disable-next-line class-methods-use-this
-    connect(_connectionObject, callback) {
-      callback()
-    }
+// Mock fs
+jest.mock('node:fs/promises')
 
-    // eslint-disable-next-line class-methods-use-this
-    on() {
-      jest.fn()
-    }
+// Mock utils class
+jest.mock('./utils')
 
-    // eslint-disable-next-line class-methods-use-this
-    emit(err) {
-      jest.fn(() => err)
-    }
-  }
-
-  return { Socket }
-})
-
-// Mock logger
-jest.mock('../../engine/logger/Logger.class')
-
-// Mock engine
-const engine = jest.mock('../../engine/OIBusEngine.class')
-engine.configService = { getConfig: () => ({ engineConfig: config.engine }) }
-engine.getCacheFolder = () => config.engine.caching.cacheFolder
-engine.eventEmitters = {}
-
-const modbusConfig = {
-  name: 'Modbus',
-  protocol: 'Modbus',
-  enabled: true,
-  Modbus: {
-    port: 502,
-    host: '127.0.0.1',
-    slaveId: 1,
-    addressOffset: 'Modbus',
-    endianness: 'Big Endian',
-    swapBytesInWords: false,
-    swapWordsInDWords: false,
-  },
-  points: [
-    {
-      pointId: 'HoldingRegister',
-      modbusType: 'holdingRegister',
-      dataType: 'UInt16',
-      address: '0x4E80',
-      multiplierCoefficient: 1,
-      type: 'number',
-      scanMode: 'every10Seconds',
-    },
-    {
-      pointId: 'HoldingRegister2',
-      modbusType: 'holdingRegister',
-      dataType: 'UInt16',
-      address: '0x4E81',
-      multiplierCoefficient: 1,
-      type: 'number',
-      scanMode: 'every10Seconds',
-    },
-    {
-      pointId: 'InputRegister',
-      modbusType: 'inputRegister',
-      dataType: 'UInt16',
-      scanMode: 'every10Seconds',
-      address: '0x3E81',
-      multiplierCoefficient: 1,
-      type: 'number',
-    },
-    {
-      pointId: 'DiscreteInput',
-      modbusType: 'discreteInput',
-      dataType: 'UInt16',
-      scanMode: 'every10Seconds',
-      address: '0x1E82',
-      multiplierCoefficient: 1,
-      type: 'number',
-    },
-    {
-      pointId: 'Coil',
-      modbusType: 'coil',
-      dataType: 'UInt16',
-      scanMode: 'every10Seconds',
-      address: '0x0E83',
-      multiplierCoefficient: 1,
-      type: 'number',
-    },
-  ],
+// Mock OIBusEngine
+const engine = {
+  configService: { getConfig: () => ({ engineConfig: config.engine }) },
+  cacheFolder: './cache',
+  addValues: jest.fn(),
+  addFile: jest.fn(),
 }
-let modbusSouth = null
 
-beforeEach(async () => {
-  jest.resetAllMocks()
-  jest.useFakeTimers()
-  modbusSouth = new Modbus(modbusConfig, engine)
-  await modbusSouth.init()
-})
+// Mock services
+jest.mock('../../services/database.service')
+jest.mock('../../engine/logger/Logger.class')
+jest.mock('../../services/status.service.class')
+jest.mock('../../services/EncryptionService.class', () => ({ getInstance: () => ({ decryptText: (password) => password }) }))
 
-describe('Modbus', () => {
-  it('should be properly initialized', () => {
-    expect(modbusSouth.url)
-      .toEqual(modbusConfig.Modbus.url)
-    const optimizedScanModes = {
-      every10Seconds: {
-        coil: {
-          '3712-3728': [
-            {
-              address: 3715,
-              dataType: 'UInt16',
-              multiplierCoefficient: 1,
-              pointId: 'Coil',
-              type: 'boolean',
-            },
-          ],
-        },
-        discreteInput: {
-          '7808-7824': [
-            {
-              address: 7810,
-              dataType: 'UInt16',
-              multiplierCoefficient: 1,
-              pointId: 'DiscreteInput',
-              type: 'number',
-            },
-          ],
-        },
-        holdingRegister: {
-          '20080-20112': [
-            {
-              address: 20096,
-              dataType: 'UInt16',
-              multiplierCoefficient: 1,
-              pointId: 'HoldingRegister',
-              type: 'number',
-            },
-            {
-              address: 20097,
-              dataType: 'UInt16',
-              multiplierCoefficient: 1,
-              pointId: 'HoldingRegister2',
-              type: 'number',
-            },
-          ],
-        },
-        inputRegister: {
-          '16000-16016': [
-            {
-              address: 16001,
-              dataType: 'UInt16',
-              multiplierCoefficient: 1,
-              pointId: 'InputRegister',
-              type: 'number',
-            },
-          ],
-        },
+// Method used to flush promises called in setTimeout
+const flushPromises = () => new Promise(jest.requireActual('timers').setImmediate)
+let settings = null
+let south = null
 
+describe('South Modbus', () => {
+  beforeEach(async () => {
+    jest.resetAllMocks()
+    jest.useFakeTimers()
+
+    // Mock node:net Socket constructor and the used function
+    net.Socket.mockReturnValue({
+      connect(_connectionObject, callback) {
+        callback()
       },
-    }
-    expect(modbusSouth.optimizedScanModes)
-      .toEqual(optimizedScanModes)
-    expect(modbusSouth.dataSource.Modbus.slaveId)
-      .toEqual(modbusConfig.Modbus.slaveId)
-  })
+      on() {
+        jest.fn()
+      },
+    })
 
-  it('should be properly initialized with addressOffset', () => {
-    const modbusConfigAddressOffset = {
-      name: 'Modbus',
+    utils.getNumberOfWords.mockReturnValue(1)
+
+    settings = {
+      id: 'southId',
+      name: 'Modbus Test',
       protocol: 'Modbus',
       enabled: true,
       Modbus: {
         port: 502,
         host: '127.0.0.1',
         slaveId: 1,
-        addressOffset: 'JBus',
+        addressOffset: 'Modbus',
         endianness: 'Big Endian',
         swapBytesInWords: false,
         swapWordsInDWords: false,
+        retryInterval: 10000,
       },
       points: [
         {
-          pointId: 'EtatBB2T0',
+          pointId: 'HoldingRegister',
           modbusType: 'holdingRegister',
           dataType: 'UInt16',
-          address: '0x3E80',
+          address: '0x4E80',
           multiplierCoefficient: 1,
-          type: 'number',
           scanMode: 'every10Seconds',
         },
         {
-          pointId: 'EtatBB2T1',
+          pointId: 'HoldingRegister2',
           modbusType: 'holdingRegister',
+          dataType: 'UInt16',
+          address: '20097',
+          multiplierCoefficient: 1,
+          scanMode: 'every10Seconds',
+        },
+        {
+          pointId: 'InputRegister',
+          modbusType: 'inputRegister',
           dataType: 'UInt16',
           scanMode: 'every10Seconds',
           address: '0x3E81',
           multiplierCoefficient: 1,
-          type: 'number',
+        },
+        {
+          pointId: 'DiscreteInput',
+          modbusType: 'discreteInput',
+          dataType: 'UInt16',
+          scanMode: 'every10Seconds',
+          address: '0x1E82',
+          multiplierCoefficient: 1,
+        },
+        {
+          pointId: 'Coil',
+          modbusType: 'coil',
+          dataType: 'UInt16',
+          scanMode: 'every10Seconds',
+          address: '0x0E83',
+          multiplierCoefficient: 1,
         },
       ],
     }
-    const modbusSouthOffset = new Modbus(modbusConfigAddressOffset, engine)
-    const optimizedScanModesAddressOffset = {
-      every10Seconds: {
-        holdingRegister: {
-          '15984-16016': [
-            {
-              pointId: 'EtatBB2T0',
-              dataType: 'UInt16',
-              address: 15999,
-              multiplierCoefficient: 1,
-              type: 'number',
-            },
-            {
-              pointId: 'EtatBB2T1',
-              dataType: 'UInt16',
-              address: 16000,
-              multiplierCoefficient: 1,
-              type: 'number',
-            },
-          ],
-        },
-      },
-    }
-    expect(modbusSouthOffset.optimizedScanModes)
-      .toEqual(optimizedScanModesAddressOffset)
+    south = new Modbus(settings, engine)
+    await south.init()
+  })
+
+  it('should be properly initialized', () => {
+    expect(south.url).toEqual(settings.Modbus.url)
+    expect(south.settings.Modbus.slaveId).toEqual(settings.Modbus.slaveId)
   })
 
   it('should properly connect', async () => {
-    databaseService.getConfig.mockReturnValue('1587640141001.0')
-    await modbusSouth.connect()
-    expect(databaseService.createConfigDatabase)
-      .toBeCalledWith(`${config.engine.caching.cacheFolder}/${modbusConfig.id}.db`)
-    expect(modbusSouth.connected)
-      .toBeTruthy()
+    await south.connect()
+    expect(databaseService.createConfigDatabase).toBeCalledWith(path.resolve(`./cache/south-${settings.id}/cache.db`))
+    expect(south.connected).toBeTruthy()
   })
 
-  it('should properly onScan', async () => {
-    await modbusSouth.connect()
-    modbusSouth.modbusClient = {
-      readHoldingRegisters: jest.fn(),
-      readInputRegisters: jest.fn(),
-      readDiscreteInputs: jest.fn(),
-      readCoils: jest.fn(),
-    }
-    modbusSouth.modbusClient.readHoldingRegisters.mockReturnValue(Promise.resolve([]))
-    modbusSouth.modbusClient.readInputRegisters.mockReturnValue(Promise.resolve([]))
-    modbusSouth.modbusClient.readDiscreteInputs.mockReturnValue(Promise.resolve([]))
-    modbusSouth.modbusClient.readCoils.mockReturnValue(Promise.resolve([]))
-    await modbusSouth.lastPointQuery('every10Seconds')
+  it('should fail to connect and try again', async () => {
+    const mockedEmitter = new Stream()
 
-    expect(modbusSouth.modbusClient.readHoldingRegisters)
-      .toBeCalledWith(20080, 32) // see the optimizedScanModes to get the startAddress and range
-    expect(modbusSouth.modbusClient.readHoldingRegisters)
-      .toBeCalledTimes(1) // addresses are in the same group, so it makes one call
+    mockedEmitter.connect = (_connectionObject, callback) => {
+      callback()
+    }
+    // Mock node:net Socket constructor and the used function
+    net.Socket.mockImplementation(() => mockedEmitter)
+    south.disconnect = jest.fn()
+    await south.connect()
+    expect(net.Socket).toHaveBeenCalledTimes(1)
+    mockedEmitter.emit('error', 'connect error')
+    await flushPromises()
+    expect(south.disconnect).toHaveBeenCalledTimes(1)
+    expect(south.logger.error).toHaveBeenCalledWith('connect error')
+    jest.advanceTimersByTime(settings.Modbus.retryInterval)
+
+    expect(net.Socket).toHaveBeenCalledTimes(2)
+  })
+
+  it('should properly query last points value', async () => {
+    await south.connect()
+    south.client = {
+      readHoldingRegisters: jest.fn().mockReturnValue({ response: { body: { valuesAsBuffer: Buffer.from([1, 2, 3, 4]) } } }),
+      readInputRegisters: jest.fn().mockReturnValue({ response: { body: { valuesAsBuffer: Buffer.from([1, 2, 3, 4]) } } }),
+      readDiscreteInputs: jest.fn().mockReturnValue({ response: { body: { valuesAsArray: [123] } } }),
+      readCoils: jest.fn().mockReturnValue({ response: { body: { valuesAsArray: [123] } } }),
+    }
+    await south.lastPointQuery('every10Seconds')
+
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledWith(20096, 1)
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledWith(20097, 1)
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledTimes(2) // addresses are in the same group, so it makes one call
+  })
+
+  it('should properly query last points value with JBus offset', async () => {
+    await south.connect()
+    south.addressOffset = 'JBus'
+    south.client = {
+      readHoldingRegisters: jest.fn().mockReturnValue({ response: { body: { valuesAsBuffer: Buffer.from([1, 2, 3, 4]) } } }),
+      readInputRegisters: jest.fn().mockReturnValue({ response: { body: { valuesAsBuffer: Buffer.from([1, 2, 3, 4]) } } }),
+      readDiscreteInputs: jest.fn().mockReturnValue({ response: { body: { valuesAsArray: [123] } } }),
+      readCoils: jest.fn().mockReturnValue({ response: { body: { valuesAsArray: [123] } } }),
+    }
+    await south.lastPointQuery('every10Seconds')
+
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledWith(20095, 1)
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledWith(20096, 1)
+    expect(south.client.readHoldingRegisters).toHaveBeenCalledTimes(2) // addresses are in the same group, so it makes one call
   })
 
   it('should properly disconnect', async () => {
-    // activate flag connect
-    modbusSouth.connected = true
-    modbusSouth.socket = { end: jest.fn() }
-    modbusSouth.modbusFunction = jest.fn()
+    const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout')
+    south.connected = true
+    const end = jest.fn()
+    south.socket = { end }
+    south.reconnectTimeout = 1
 
-    modbusSouth.reconnectTimeout = setTimeout(() => {}, 1000)
+    await south.disconnect()
+    expect(end).toHaveBeenCalled()
+    expect(south.connected).toBeFalsy()
+    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1)
 
-    await modbusSouth.disconnect()
-    expect(modbusSouth.socket.end)
-      .toBeCalled()
-    expect(modbusSouth.connected)
-      .toBeFalsy()
+    jest.clearAllMocks()
+    south.connected = false
+    south.reconnectTimeout = null
+    south.socket = { end }
+    await south.disconnect()
 
-    await modbusSouth.lastPointQuery()
+    expect(clearTimeoutSpy).not.toHaveBeenCalled()
+    expect(end).not.toHaveBeenCalled()
+  })
 
-    expect(modbusSouth.modbusFunction)
-      .not
-      .toBeCalled()
+  it('should throw error if modbus function is not defined', async () => {
+    await south.connect()
+
+    const badPoint = {
+      pointId: 'badPoint',
+      modbusType: 'badModbusType',
+      dataType: 'UInt16',
+      scanMode: 'every10Seconds',
+      address: '0x1E82',
+      multiplierCoefficient: 1,
+    }
+    let modbusError
+    try {
+      await south.modbusFunction(badPoint)
+    } catch (error) {
+      modbusError = error
+    }
+    expect(modbusError).toEqual(new Error(`Wrong Modbus type "badModbusType" for point ${JSON.stringify(badPoint)}`))
+  })
+
+  it('should throw error if modbus function throws an error', async () => {
+    await south.connect()
+    south.client.readHoldingRegisters = jest.fn().mockImplementation(() => {
+      throw new Error('modbus error')
+    })
+    let modbusError
+    try {
+      await south.lastPointQuery('every10Seconds')
+    } catch (error) {
+      modbusError = error
+    }
+    expect(modbusError).toEqual(new Error('modbus error'))
+  })
+
+  it('should reconnect if modbus function throws a connection error', async () => {
+    south.disconnect = jest.fn()
+    south.createModbusClient = jest.fn()
+    await south.connect()
+    south.client = {
+      readHoldingRegisters: jest.fn().mockImplementation(() => {
+        const error = new Error()
+        error.err = 'Offline'
+        throw error
+      }),
+    }
+
+    await south.lastPointQuery('every10Seconds')
+    expect(south.logger.error).toHaveBeenCalledWith('Modbus server offline.')
+    expect(net.Socket).toHaveBeenCalledTimes(1)
+    jest.advanceTimersByTime(settings.Modbus.retryInterval)
+    expect(net.Socket).toHaveBeenCalledTimes(2)
+  })
+
+  it('should get value from buffer with UInt16', () => {
+    south.swapBytesInWords = false
+    south.endianness = 'Big Endian'
+    expect(south.getValueFromBuffer(Buffer.from([64, 64]), 1, 'UInt16')).toEqual(16448)
+    south.swapBytesInWords = true
+    expect(south.getValueFromBuffer(Buffer.from([0, 1]), 1, 'UInt16')).toEqual(256)
+    expect(south.getValueFromBuffer(Buffer.from([1, 0]), 1, 'UInt16')).toEqual(1)
+    south.endianness = 'Little Endian'
+    expect(south.getValueFromBuffer(Buffer.from([0, 1]), 1, 'UInt16')).toEqual(1)
+    expect(south.getValueFromBuffer(Buffer.from([1, 0]), 1, 'UInt16')).toEqual(256)
+  })
+
+  it('should get value from buffer with Float', () => {
+    south.swapWordsInDWords = false
+    south.swapBytesInWords = false
+    south.endianness = 'Big Endian'
+    expect(south.getValueFromBuffer(Buffer.from([0, 0, 64, 64]), 1, 'Float')).toEqual(3)
+    expect(south.getValueFromBuffer(Buffer.from([81, 236, 65, 122]), 10, 'Float')).toEqual(156.45)
+  })
+
+  it('should get value from buffer with UInt32', () => {
+    south.swapWordsInDWords = true
+    south.endianness = 'Big Endian'
+    expect(south.getValueFromBuffer(Buffer.from([0, 0, 64, 64]), 1, 'UInt32')).toEqual(16448)
+    south.swapBytesInWords = true
+    expect(south.getValueFromBuffer(Buffer.from([0, 0, 64, 64]), 1, 'UInt32')).toEqual(16448)
+    expect(south.getValueFromBuffer(Buffer.from([0, 0, 1, 0]), 1, 'UInt32')).toEqual(1)
+    south.swapBytesInWords = false
+    expect(south.getValueFromBuffer(Buffer.from([0, 0, 1, 0]), 1, 'UInt32')).toEqual(256)
   })
 })

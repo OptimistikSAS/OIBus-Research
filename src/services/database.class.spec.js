@@ -44,7 +44,7 @@ describe('Database services', () => {
         + 'timestamp TEXT KEY, '
         + 'data TEXT, '
         + 'point_id TEXT, '
-        + 'data_source TEXT);')
+        + 'south TEXT);')
     expect(prepare).toHaveBeenCalledWith('PRAGMA secure_delete = OFF;')
     expect(prepare).toHaveBeenCalledWith('PRAGMA cache_size = 100000;')
     expect(prepare).toHaveBeenCalledWith('PRAGMA locking_mode = exclusive;')
@@ -62,13 +62,24 @@ describe('Database services', () => {
     expect(expectedDatabase).toBe(mockDatabase)
   })
 
+  it('should create value errors database', () => {
+    const expectedDatabase = databaseService.createValueErrorsDatabase('myDb.db')
+    expect(prepare).toHaveBeenCalledTimes(1)
+    expect(prepare).toHaveBeenCalledWith('CREATE TABLE IF NOT EXISTS cache ('
+        + 'id INTEGER PRIMARY KEY, '
+        + 'timestamp TEXT, '
+        + 'data TEXT, '
+        + 'point_id TEXT);')
+    expect(run).toHaveBeenCalledTimes(1)
+    expect(expectedDatabase).toBe(mockDatabase)
+  })
+
   it('should create file database', () => {
     const expectedDatabase = databaseService.createFilesDatabase('myDb.db')
     expect(prepare).toHaveBeenCalledTimes(1)
     expect(prepare).toHaveBeenCalledWith('CREATE TABLE IF NOT EXISTS cache ('
         + 'id INTEGER PRIMARY KEY, '
         + 'timestamp INTEGER, '
-        + 'application TEXT, '
         + 'path TEXT);')
     expect(run).toHaveBeenCalledTimes(1)
     expect(expectedDatabase).toBe(mockDatabase)
@@ -88,7 +99,7 @@ describe('Database services', () => {
   it('should save values', () => {
     databaseService.saveValues(mockDatabase, 'mySouthName', values)
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, data, point_id, data_source) VALUES '
+    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, data, point_id, south) VALUES '
         + '(\'2022-08-25T12:58:00.000Z\',\'%7B%22value%22:1,%22quality%22:192%7D\',\'point001\',\'mySouthName\'),'
         + '(\'2022-08-25T12:59:00.000Z\',\'%7B%22value%22:2,%22quality%22:192%7D\',\'point002\',\'mySouthName\');')
     expect(run).toHaveBeenCalledTimes(1)
@@ -99,11 +110,11 @@ describe('Database services', () => {
       { timestamp: '2022-08-25T12:58:00.000Z', data: { value: 1, quality: 192 }, pointId: 'point001' },
       { timestamp: '2022-08-25T12:59:00.000Z', data: { value: 2, quality: 192 }, pointId: 'point002' },
     ]
-    databaseService.saveErroredValues(mockDatabase, 'myNorthId', valuesToInsert)
+    databaseService.saveErroredValues(mockDatabase, valuesToInsert)
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, data, point_id, application) VALUES '
-            + '(\'2022-08-25T12:58:00.000Z\',\'%7B%22value%22:1,%22quality%22:192%7D\',\'point001\',\'myNorthId\'),'
-            + '(\'2022-08-25T12:59:00.000Z\',\'%7B%22value%22:2,%22quality%22:192%7D\',\'point002\',\'myNorthId\');')
+    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, data, point_id) VALUES '
+            + '(\'2022-08-25T12:58:00.000Z\',\'%7B%22value%22:1,%22quality%22:192%7D\',\'point001\'),'
+            + '(\'2022-08-25T12:59:00.000Z\',\'%7B%22value%22:2,%22quality%22:192%7D\',\'point002\');')
     expect(run).toHaveBeenCalledTimes(1)
   })
 
@@ -120,7 +131,7 @@ describe('Database services', () => {
   it('should get values to send', () => {
     const valuesToSend = databaseService.getValuesToSend(mockDatabase, 50)
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('SELECT id, timestamp, data, point_id AS pointId, data_source as dataSourceId '
+    expect(prepare).toHaveBeenCalledWith('SELECT id, timestamp, data, point_id AS pointId, south as dataSourceId '
         + 'FROM cache '
         + 'ORDER BY timestamp '
         + 'LIMIT 50')
@@ -142,35 +153,42 @@ describe('Database services', () => {
   })
 
   it('should save file', () => {
-    databaseService.saveFile(mockDatabase, 123, 'myNorthId', 'myFilePath')
+    databaseService.saveFile(mockDatabase, 123, 'myFilePath')
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, application, path) VALUES (?, ?, ?)')
+    expect(prepare).toHaveBeenCalledWith('INSERT INTO cache (timestamp, path) VALUES (?, ?)')
 
     expect(run).toHaveBeenCalledTimes(1)
-    expect(run).toHaveBeenCalledWith(123, 'myNorthId', 'myFilePath')
+    expect(run).toHaveBeenCalledWith(123, 'myFilePath')
   })
 
   it('should get file to send', () => {
-    const result = databaseService.getFileToSend(mockDatabase, 'myNorthId')
+    const result = databaseService.getFileToSend(mockDatabase)
     expect(prepare).toHaveBeenCalledTimes(1)
     expect(prepare).toHaveBeenCalledWith('SELECT path, timestamp '
         + 'FROM cache '
-        + 'WHERE application = ? '
         + 'ORDER BY timestamp '
         + 'LIMIT 1')
 
     expect(all).toHaveBeenCalledTimes(1)
-    expect(all).toHaveBeenCalledWith('myNorthId')
+    expect(all).toHaveBeenCalledWith()
     expect(result).toEqual({ path: 'myFilePath', timestamp: 123 })
   })
 
+  it('should return null if no file to send', () => {
+    mockDatabase.prepare.mockReturnValue({ all: jest.fn(() => []) })
+
+    const result = databaseService.getFileToSend(mockDatabase)
+
+    expect(result).toEqual(null)
+  })
+
   it('should delete sent file', () => {
-    databaseService.deleteSentFile(mockDatabase, 'myNorthId', 'myFilePath')
+    databaseService.deleteSentFile(mockDatabase, 'myFilePath')
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('DELETE FROM cache WHERE application = ? AND path = ?')
+    expect(prepare).toHaveBeenCalledWith('DELETE FROM cache WHERE path = ?')
 
     expect(run).toHaveBeenCalledTimes(1)
-    expect(run).toHaveBeenCalledWith('myNorthId', 'myFilePath')
+    expect(run).toHaveBeenCalledWith('myFilePath')
   })
 
   it('should get file count', () => {
@@ -193,12 +211,12 @@ describe('Database services', () => {
     localGet.mockReturnValue({ count: 11 })
     mockDatabase.prepare.mockReturnValue({ get: localGet })
 
-    const result = databaseService.getFileCountForNorthConnector(mockDatabase, 'myNorthId')
+    const result = databaseService.getFileCountForNorthConnector(mockDatabase)
     expect(prepare).toHaveBeenCalledTimes(1)
-    expect(prepare).toHaveBeenCalledWith('SELECT COUNT(*) AS count FROM cache WHERE application = ?')
+    expect(prepare).toHaveBeenCalledWith('SELECT COUNT(*) AS count FROM cache')
 
     expect(localGet).toHaveBeenCalledTimes(1)
-    expect(localGet).toHaveBeenCalledWith('myNorthId')
+    expect(localGet).toHaveBeenCalledWith()
 
     expect(result).toEqual(11)
   })
@@ -256,6 +274,90 @@ describe('Database services', () => {
     expect(localAll).toHaveBeenCalledWith(['2022-07-25T12:58:00.000Z', '2022-08-25T12:58:00.000Z', ...verbosity])
 
     expect(result).toEqual(retrievedLogs)
+  })
+
+  it('should get paginated logs', () => {
+    const retrievedLogs = [
+      { timestamp: 123, message: 'myLogMessage1' },
+      { timestamp: 124, message: 'myLogMessage2' },
+    ]
+    const localAll = jest.fn()
+    localAll.mockReturnValue(retrievedLogs)
+    const localGet = jest.fn()
+    localGet.mockReturnValue({ count: 2 })
+    mockDatabase.prepare.mockReturnValue({ all: localAll, get: localGet })
+
+    const verbosity = ['error', 'warn']
+    const result = databaseService.getPaginatedLogs(
+      'myDb.db',
+      '2022-07-25T12:58:00.000Z',
+      '2022-08-25T12:58:00.000Z',
+      'myScope',
+      'myTextContent',
+      verbosity,
+      'ASC',
+    )
+    expect(prepare).toHaveBeenCalledTimes(2)
+    expect(prepare).toHaveBeenCalledWith('SELECT timestamp, level, scope, source, message FROM logs WHERE '
+        + 'timestamp BETWEEN \'2022-07-25T12:58:00.000Z\' AND \'2022-08-25T12:58:00.000Z\' AND level IN (\'error\',\'warn\') '
+        + 'AND scope = \'myScope\' AND message like \'%myTextContent%\' ORDER BY timestamp ASC LIMIT 50 OFFSET 0')
+    expect(prepare).toHaveBeenCalledWith('SELECT COUNT(*) as count FROM logs WHERE timestamp BETWEEN '
+        + '\'2022-07-25T12:58:00.000Z\' AND \'2022-08-25T12:58:00.000Z\' AND level IN (\'error\',\'warn\') '
+        + 'AND scope = \'myScope\' AND message like \'%myTextContent%\'')
+
+    expect(localAll).toHaveBeenCalledTimes(1)
+    expect(localGet).toHaveBeenCalledTimes(1)
+
+    const expectedResult = {
+      content: [{ message: 'myLogMessage1', timestamp: 123 }, { message: 'myLogMessage2', timestamp: 124 }],
+      pageNumber: 0,
+      pageSize: 2,
+      totalNumberOfElements: 2,
+      totalNumberOfPages: 1,
+    }
+    expect(result).toEqual(expectedResult)
+  })
+
+  it('should get paginated logs with page, without scope and text content', () => {
+    const retrievedLogs = [
+      { timestamp: 123, message: 'myLogMessage1' },
+      { timestamp: 124, message: 'myLogMessage2' },
+    ]
+    const localAll = jest.fn()
+    localAll.mockReturnValue(retrievedLogs)
+    const localGet = jest.fn()
+    localGet.mockReturnValue({ count: 2 })
+    mockDatabase.prepare.mockReturnValue({ all: localAll, get: localGet })
+
+    const verbosity = ['error', 'warn']
+    const result = databaseService.getPaginatedLogs(
+      'myDb.db',
+      '2022-07-25T12:58:00.000Z',
+      '2022-08-25T12:58:00.000Z',
+      null,
+      null,
+      verbosity,
+      'DESC',
+      1,
+    )
+    expect(prepare).toHaveBeenCalledTimes(2)
+    expect(prepare).toHaveBeenCalledWith('SELECT timestamp, level, scope, source, message FROM logs WHERE '
+        + 'timestamp BETWEEN \'2022-07-25T12:58:00.000Z\' AND \'2022-08-25T12:58:00.000Z\' AND level IN (\'error\',\'warn\') '
+        + 'ORDER BY timestamp DESC LIMIT 50 OFFSET 50')
+    expect(prepare).toHaveBeenCalledWith('SELECT COUNT(*) as count FROM logs WHERE timestamp BETWEEN '
+        + '\'2022-07-25T12:58:00.000Z\' AND \'2022-08-25T12:58:00.000Z\' AND level IN (\'error\',\'warn\')')
+
+    expect(localAll).toHaveBeenCalledTimes(1)
+    expect(localGet).toHaveBeenCalledTimes(1)
+
+    const expectedResult = {
+      content: [{ message: 'myLogMessage1', timestamp: 123 }, { message: 'myLogMessage2', timestamp: 124 }],
+      pageNumber: 1,
+      pageSize: 2,
+      totalNumberOfElements: 2,
+      totalNumberOfPages: 1,
+    }
+    expect(result).toEqual(expectedResult)
   })
 
   it('should get history query south data', () => {

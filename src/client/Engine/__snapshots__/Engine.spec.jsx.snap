@@ -302,7 +302,7 @@ exports[`Engine check Engine 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -350,7 +350,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -390,7 +390,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -430,7 +430,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -470,7 +470,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -769,38 +769,6 @@ exports[`Engine check Engine 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -958,38 +926,6 @@ exports[`Engine check Engine 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -1397,7 +1333,7 @@ exports[`Engine check Engine 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -1558,7 +1494,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -1706,7 +1642,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -1854,7 +1790,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -1950,7 +1886,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -2029,38 +1965,6 @@ exports[`Engine check Engine 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -2078,7 +1982,7 @@ exports[`Engine check Engine 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -2105,205 +2009,21 @@ exports[`Engine check Engine 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -2371,7 +2091,7 @@ exports[`Engine check Engine 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -2556,7 +2276,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -2708,7 +2428,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -2822,7 +2542,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3474,7 +3194,7 @@ exports[`Engine check Engine 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3522,7 +3242,7 @@ exports[`Engine check Engine 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3848,7 +3568,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3896,7 +3616,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3936,7 +3656,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -3976,7 +3696,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -4016,7 +3736,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -4315,38 +4035,6 @@ exports[`Engine check Engine when config has no proxies 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -4504,38 +4192,6 @@ exports[`Engine check Engine when config has no proxies 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -4943,7 +4599,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -5104,7 +4760,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -5252,7 +4908,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -5400,7 +5056,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -5496,7 +5152,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -5575,38 +5231,6 @@ exports[`Engine check Engine when config has no proxies 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -5624,7 +5248,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -5651,205 +5275,21 @@ exports[`Engine check Engine when config has no proxies 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -5917,7 +5357,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -6586,7 +6026,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -6634,7 +6074,7 @@ exports[`Engine check Engine when config has no proxies 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -6980,7 +6420,7 @@ exports[`Engine check change engineName 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -7028,7 +6468,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -7068,7 +6508,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -7108,7 +6548,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -7148,7 +6588,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -7447,38 +6887,6 @@ exports[`Engine check change engineName 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -7636,38 +7044,6 @@ exports[`Engine check change engineName 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -8075,7 +7451,7 @@ exports[`Engine check change engineName 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -8236,7 +7612,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -8384,7 +7760,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -8532,7 +7908,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -8628,7 +8004,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -8707,38 +8083,6 @@ exports[`Engine check change engineName 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -8756,7 +8100,7 @@ exports[`Engine check change engineName 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -8783,205 +8127,21 @@ exports[`Engine check change engineName 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -9049,7 +8209,7 @@ exports[`Engine check change engineName 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -9234,7 +8394,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -9386,7 +8546,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -9500,7 +8660,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10152,7 +9312,7 @@ exports[`Engine check change engineName 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10200,7 +9360,7 @@ exports[`Engine check change engineName 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10526,7 +9686,7 @@ exports[`Engine check change password 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10574,7 +9734,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10614,7 +9774,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10654,7 +9814,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10694,7 +9854,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -10993,38 +10153,6 @@ exports[`Engine check change password 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -11182,38 +10310,6 @@ exports[`Engine check change password 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -11621,7 +10717,7 @@ exports[`Engine check change password 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -11782,7 +10878,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -11930,7 +11026,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -12078,7 +11174,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -12174,7 +11270,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -12253,38 +11349,6 @@ exports[`Engine check change password 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -12302,7 +11366,7 @@ exports[`Engine check change password 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -12329,205 +11393,21 @@ exports[`Engine check change password 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -12595,7 +11475,7 @@ exports[`Engine check change password 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -12780,7 +11660,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -12932,7 +11812,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -13046,7 +11926,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -13698,7 +12578,7 @@ exports[`Engine check change password 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -13746,7 +12626,7 @@ exports[`Engine check change password 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14072,7 +12952,7 @@ exports[`Engine check change port 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14120,7 +13000,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14160,7 +13040,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14200,7 +13080,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14240,7 +13120,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -14539,38 +13419,6 @@ exports[`Engine check change port 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -14728,38 +13576,6 @@ exports[`Engine check change port 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -15167,7 +13983,7 @@ exports[`Engine check change port 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -15328,7 +14144,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -15476,7 +14292,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -15624,7 +14440,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -15720,7 +14536,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -15799,38 +14615,6 @@ exports[`Engine check change port 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -15848,7 +14632,7 @@ exports[`Engine check change port 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -15875,205 +14659,21 @@ exports[`Engine check change port 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -16141,7 +14741,7 @@ exports[`Engine check change port 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -16326,7 +14926,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -16478,7 +15078,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -16592,7 +15192,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17244,7 +15844,7 @@ exports[`Engine check change port 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17292,7 +15892,7 @@ exports[`Engine check change port 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17618,7 +16218,7 @@ exports[`Engine check change user 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17666,7 +16266,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17706,7 +16306,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17746,7 +16346,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -17786,7 +16386,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -18085,38 +16685,6 @@ exports[`Engine check change user 1`] = `
             class="row"
           >
             <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.fileLog.fileName"
-                >
-                  File name for the log file
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.fileLog.fileName"
-                  name="engine.logParameters.fileLog.fileName"
-                  type="text"
-                  value="./logs/journal.log"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the log file
-                  </div>
-                </small>
-              </div>
-            </div>
-            <div
               class="col-md-2"
             >
               <div
@@ -18274,38 +16842,6 @@ exports[`Engine check change user 1`] = `
           <div
             class="row"
           >
-            <div
-              class="col-md-4"
-            >
-              <div
-                class="mb-3"
-              >
-                <label
-                  class="form-label"
-                  for="engine.logParameters.sqliteLog.fileName"
-                >
-                  File name of sqlite db
-                </label>
-                <input
-                  aria-invalid="false"
-                  class="oi-form-input form-control"
-                  id="engine.logParameters.sqliteLog.fileName"
-                  name="engine.logParameters.sqliteLog.fileName"
-                  type="text"
-                  value="./logs/journal.db"
-                />
-                <div
-                  class="invalid-feedback"
-                />
-                <small
-                  class="form-text text-muted"
-                >
-                  <div>
-                    The file name of the database file
-                  </div>
-                </small>
-              </div>
-            </div>
             <div
               class="col-md-2"
             >
@@ -18713,7 +17249,7 @@ exports[`Engine check change user 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -18874,7 +17410,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -19022,7 +17558,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -19170,7 +17706,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -19266,7 +17802,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -19345,38 +17881,6 @@ exports[`Engine check change user 1`] = `
         class="row"
       >
         <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.cacheFolder"
-            >
-              Cache folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.cacheFolder"
-              name="engine.caching.cacheFolder"
-              type="text"
-              value="./cache"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the cached data
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
           class="col-md-3"
         >
           <div
@@ -19394,7 +17898,7 @@ exports[`Engine check change user 1`] = `
               id="engine.caching.bufferMax"
               name="engine.caching.bufferMax"
               type="integer"
-              value=""
+              value="250"
             />
             <div
               class="invalid-feedback"
@@ -19421,205 +17925,21 @@ exports[`Engine check change user 1`] = `
               Buffer flush interval (in ms)
             </label>
             <input
-              aria-invalid="true"
-              class="oi-form-input is-invalid form-control"
+              aria-invalid="false"
+              class="oi-form-input form-control"
               id="engine.caching.bufferTimeoutInterval"
               name="engine.caching.bufferTimeoutInterval"
               type="integer"
-              value=""
+              value="300"
             />
             <div
               class="invalid-feedback"
-            >
-              Value must be greater than 10
-            </div>
+            />
             <small
               class="form-text text-muted"
             >
               <div>
                 The number of ms before flushing the buffer to cache its values
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3 form-check form-switch"
-          >
-            <label
-              class="form-check-label"
-            >
-              Archive mode activated
-            </label>
-            <input
-              checked=""
-              class="oi-form-input checkbox form-check-input"
-              id="engine.caching.archive.enabled"
-              name="engine.caching.archive.enabled"
-              type="checkbox"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Move to archive folder or delete files when they are sent
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.archiveFolder"
-            >
-              Archive folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.archiveFolder"
-              name="engine.caching.archive.archiveFolder"
-              type="text"
-              value="./cache/archive/"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the archived files
-              </div>
-            </small>
-          </div>
-        </div>
-        <div
-          class="col-md-2"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.caching.archive.retentionDuration"
-            >
-              Retention duration
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.caching.archive.retentionDuration"
-              name="engine.caching.archive.retentionDuration"
-              type="integer"
-              value="720"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Retention period of archived files (in hours)
-              </div>
-            </small>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <h5>
-          HistoryQuery parameters
-          <button
-            class="util-button mt-1 btn btn-link"
-            id="id"
-          >
-            <svg
-              class="oi-help"
-              fill="currentColor"
-              height="12"
-              stroke="currentColor"
-              stroke-width="0"
-              viewBox="0 0 512 512"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-              />
-            </svg>
-          </button>
-        </h5>
-      </div>
-      <div
-        class="container-fluid"
-      >
-        <div
-          class="collapse"
-          toggler="id"
-        >
-          <div
-            class="row"
-            style="margin-bottom: 15px;"
-          >
-            <div
-              class="col"
-            >
-              <p>
-                HistoryQuery requests are used to export high amount of data from historical capable South protocols, like OPC HDA, OPCUA HA. The export data is stored using CSV files in the specified folder. When the export is finished the data will be sent to North applications capable of handling those data.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="row"
-      >
-        <div
-          class="col-md-4"
-        >
-          <div
-            class="mb-3"
-          >
-            <label
-              class="form-label"
-              for="engine.historyQuery.folder"
-            >
-              HistoryQuery Folder
-            </label>
-            <input
-              aria-invalid="false"
-              class="oi-form-input form-control"
-              id="engine.historyQuery.folder"
-              name="engine.historyQuery.folder"
-              type="text"
-              value="./historyQuery"
-            />
-            <div
-              class="invalid-feedback"
-            />
-            <small
-              class="form-text text-muted"
-            >
-              <div>
-                Where to store the exported data
               </div>
             </small>
           </div>
@@ -19687,7 +18007,7 @@ exports[`Engine check change user 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -19872,7 +18192,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -20024,7 +18344,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -20138,7 +18458,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -20790,7 +19110,7 @@ exports[`Engine check change user 1`] = `
                   scope="col"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon me-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"
@@ -20838,7 +19158,7 @@ exports[`Engine check change user 1`] = `
                   class="align-center"
                 >
                   <svg
-                    class="oi-icon"
+                    class="oi-icon mx-2"
                     fill="currentColor"
                     height="1em"
                     stroke="currentColor"

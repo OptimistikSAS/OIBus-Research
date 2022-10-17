@@ -1,5 +1,4 @@
-const jsmodbus = require('jsmodbus')
-const net = require('net')
+const net = require('node:net')
 
 const { getOptimizedScanModes } = require('./config/getOptimizedConfig')
 
@@ -12,125 +11,202 @@ class Modbus extends SouthHandler {
   /**
    * Constructor for Modbus
    * @constructor
-   * @param {Object} dataSource - The data source
-   * @param {Engine} engine - The engine
+   * @param {Object} settings - The South connector settings
+   * @param {BaseEngine} engine - The Engine
    * @return {void}
    */
-  constructor(dataSource, engine) {
-    super(dataSource, engine)
-    const { addressOffset, retryInterval } = this.dataSource.Modbus
+  constructor(settings, engine) {
+    super(settings, engine)
+    const {
+      addressOffset,
+      retryInterval,
+      host,
+      port,
+      slaveId,
+      endianness,
+      swapWordsInDWords,
+      swapBytesInWords,
+    } = this.settings.Modbus
 
-    this.optimizedScanModes = getOptimizedScanModes(this.dataSource.points, addressOffset, this.logger)
-    this.connected = false
+    this.host = host
+    this.port = port
+    this.slaveId = slaveId
+    this.retryInterval = retryInterval
+    this.endianness = endianness
+    this.swapWordsInDWords = swapWordsInDWords
+    this.swapBytesInWords = swapBytesInWords
+    this.addressOffset = addressOffset
+
+    // Initialized at connection
     this.reconnectTimeout = null
-
-    this.retryInterval = retryInterval // retry interval before trying to connect again
+    this.socket = null
+    this.client = null
   }
 
   /**
    * Runs right instructions based on a given scanMode
-   * @param {String} scanMode - Cron time
-   * @return {void}
+   * @param {String} scanMode - The scan mode
+   * @returns {Promise<void>} - The result promise
    */
-  lastPointQuery(scanMode) {
-    const { connected, optimizedScanModes } = this
-    const scanGroup = optimizedScanModes[scanMode]
+  async lastPointQuery(scanMode) {
+    const pointsToRead = this.settings.points.filter((point) => point.scanMode === scanMode)
 
-    if (!scanGroup || !connected) {
-      this.logger.debug(`onScan ignored: connected:${connected}, scanMode:${scanMode}`)
-      return
+    try {
+      await pointsToRead.reduce((promise, point) => promise.then(
+        async () => this.modbusFunction(point),
+      ), Promise.resolve())
+    } catch (error) {
+      if (error?.err === 'Offline') {
+        this.logger.error('Modbus server offline.')
+        await this.disconnect()
+        this.reconnectTimeout = setTimeout(this.connect.bind(this), this.retryInterval)
+      } else {
+        throw error
+      }
+    }
+  }
+
+  /**
+   * Dynamically call the right function based on the given point settings
+   * @param {Object} point - the point to read
+   * @returns {Promise<void>} - The result promise
+   */
+  async modbusFunction(point) {
+    const offset = this.addressOffset === 'Modbus' ? 0 : -1
+    const address = (point.address.match(/^0x[0-9a-f]+$/i) ? parseInt(point.address, 16)
+      : parseInt(point.address, 10)) + offset
+
+    let value
+    switch (point.modbusType) {
+      case 'coil':
+        value = await this.readCoil(address, point.multiplierCoefficient)
+        break
+      case 'discreteInput':
+        value = await this.readDiscreteInputRegister(address, point.multiplierCoefficient)
+        break
+      case 'inputRegister':
+        value = await this.readInputRegister(address, point.multiplierCoefficient, point.dataType)
+        break
+      case 'holdingRegister':
+        value = await this.readHoldingRegister(address, point.multiplierCoefficient, point.dataType)
+        break
+      default:
+        throw new Error(`Wrong Modbus type "${point.modbusType}" for point ${JSON.stringify(point)}`)
+    }
+    const formattedData = {
+      pointId: point.pointId,
+      timestamp: new Date().toISOString(),
+      data: { value: JSON.stringify(value) },
+    }
+    await this.addValues([formattedData])
+  }
+
+  /**
+   * Read a Modbus coil
+   * @param {Number} address - The address to query
+   * @returns {Promise<Number>} - The coil value
+   */
+  async readCoil(address) {
+    const { response } = await this.client.readCoils(address, 1)
+    return response.body.valuesAsArray[0]
+  }
+
+  /**
+   * Read a Modbus discrete input register
+   * @param {Number} address - The address to query
+   * @returns {Promise<Number>} - The discrete input register value
+   */
+  async readDiscreteInputRegister(address) {
+    const { response } = await this.client.readDiscreteInputs(address, 1)
+    return response.body.valuesAsArray[0]
+  }
+
+  /**
+   * Read a Modbus input register
+   * @param {Number} address - The address to query
+   * @param {Number} multiplier - The multiplier (usually 1, 0.1, 10...)
+   * @param {String} dataType - The address to query
+   * @returns {Promise<Number>} - The input register value
+   */
+  async readInputRegister(address, multiplier, dataType) {
+    const numberOfWords = getNumberOfWords(dataType)
+    const { response } = await this.client.readInputRegisters(address, numberOfWords)
+    return this.getValueFromBuffer(response.body.valuesAsBuffer, multiplier, dataType)
+  }
+
+  /**
+   * Read a Modbus holding register
+   * @param {Number} address - The address to query
+   * @param {Number} multiplier - The multiplier (usually 1, 0.1, 10...)
+   * @param {String} dataType - The address to query
+   * @returns {Promise<Number>} - The input register value
+   */
+  async readHoldingRegister(address, multiplier, dataType) {
+    const numberOfWords = getNumberOfWords(dataType)
+    const { response } = await this.client.readHoldingRegisters(address, numberOfWords)
+    return this.getValueFromBuffer(response.body.valuesAsBuffer, multiplier, dataType)
+  }
+
+  /**
+   * Retrieve a value from buffer with appropriate conversion according to the modbus settings
+   * @param {Buffer} buffer - The buffer to parse
+   * @param {Number} multiplier - The multiplier of the retrieve value (usually 0.1, 0.001, 10...
+   * @param {'UInt16' | 'Int16' | 'UInt32' | 'Int32' | 'BigUInt64' | 'BigInt64' | 'Float' | 'Double'} dataType - The
+   * data type to convert
+   * @returns {Number} - The retrieved and parsed value
+   */
+  getValueFromBuffer(buffer, multiplier, dataType) {
+    const endianness = this.endianness === 'Big Endian' ? 'BE' : 'LE'
+    const bufferFunctionName = `read${dataType}${endianness}`
+    if (!['Int16', 'UInt16'].includes(dataType)) {
+      buffer.swap32().swap16()
+      if (this.swapWordsInDWords) {
+        buffer.swap16().swap32()
+      }
+      if (this.swapBytesInWords) {
+        buffer.swap16()
+      }
+      const bufferValue = buffer[bufferFunctionName]()
+      return parseFloat((bufferValue * multiplier).toFixed(5))
     }
 
-    Object.keys(scanGroup).forEach((modbusType) => {
-      const funcName = `read${`${modbusType.charAt(0).toUpperCase()}${modbusType.slice(1)}`}s`
-      Object.entries(scanGroup[modbusType]).forEach(([range, points]) => {
-        const rangeAddresses = range.split('-')
-        const startAddress = parseInt(rangeAddresses[0], 10) // First address of the group
-        const endAddress = parseInt(rangeAddresses[1], 10) // Last address of the group
-        const rangeSize = endAddress - startAddress // Size of the addresses group
-        this.modbusFunction(funcName, { startAddress, rangeSize }, points)
+    if (this.swapBytesInWords) {
+      buffer.swap16()
+    }
+
+    const bufferValue = buffer[bufferFunctionName]()
+    return parseFloat((bufferValue * multiplier).toFixed(5))
+  }
+
+  /**
+   * Initiates a connection to the right host and port.
+   * @returns {Promise<void>} - The result promise
+   */
+  async connect() {
+    return new Promise((resolve) => {
+      if (this.reconnectTimeout) {
+        clearTimeout(this.reconnectTimeout)
+      }
+      this.socket = new net.Socket()
+      this.client = new modbus.client.TCP(this.socket, this.slaveId)
+      this.socket.connect(
+        { host: this.host, port: this.port },
+        async () => {
+          await super.connect()
+          resolve()
+        },
+      )
+      this.socket.on('error', async (error) => {
+        this.logger.error(error)
+        await this.disconnect()
+        this.reconnectTimeout = setTimeout(this.connect.bind(this), this.retryInterval)
       })
     })
   }
 
   /**
-   * Read point value according to it's data type (UInt16, UInt32, etc)
-   * @param {Object} response Response of the modbus request
-   * @param {Object} point The point to read
-   * @param {Number} position Position of the point in the response
-   * @return {Number} Value stored at the specified address
-   */
-  readRegisterValue(response, point, position) {
-    if (response.body.constructor.name === 'ReadCoilsResponseBody' || response.body.constructor.name === 'ReadDiscreteInputsResponseBody') {
-      return response.body.valuesAsArray[position]
-    }
-    const endianness = this.dataSource.Modbus.endianness === 'Big Endian' ? 'BE' : 'LE'
-    const funcName = `read${point.dataType}${endianness}`
-
-    let responseBuffer = response.body.valuesAsBuffer
-    // transform 01 02 03 04 into 03 04 01 02
-    if (this.dataSource.Modbus.swapWordsInDWords && !['Int16', 'UInt16'].includes(point.dataType)) {
-      responseBuffer = responseBuffer.swap32().swap16()
-    }
-
-    // transform 01 02 03 04 into 02 01 04 03
-    if (this.dataSource.Modbus.swapBytesInWords) {
-      responseBuffer = responseBuffer.swap16()
-    }
-    /* Here, the position must be multiplied by 2 because the jsmodbus library is set to read addresses values on 16 bits (2 bytes),
-      but in the valuesAsBuffer field each cell of the array contains 8 bits (1 byte) */
-    return responseBuffer[funcName](position * 2)
-  }
-
-  /**
-   * Dynamically call the right function based on the given name
-   * @param {String} funcName - Name of the function to run
-   * @param {Object} infos - Information about the group of addresses (first address of the group, size)
-   * @param {Object} points - the points to read
-   * @return {void}
-   */
-  modbusFunction(funcName, { startAddress, rangeSize }, points) {
-    if (this.modbusClient[funcName]) {
-      this.modbusClient[funcName](startAddress, rangeSize)
-        .then(({ response }) => {
-          const timestamp = new Date().toISOString()
-          points.forEach((point) => {
-            const position = point.address - startAddress - 1
-            const data = this.readRegisterValue(response, point, position)
-            /** @todo: below should send by batch instead of single points */
-            this.addValues([
-              {
-                pointId: point.pointId,
-                timestamp,
-                data: { value: JSON.stringify(parseFloat((data * point.multiplierCoefficient).toFixed(5))) },
-              },
-            ])
-          })
-        })
-        .catch((error) => {
-          this.logger.error(`Modbus onScan error: for ${startAddress} and ${rangeSize}, ${funcName} error : ${JSON.stringify(error)}`)
-          if (error && error.err === 'Offline') {
-            this.disconnect()
-            this.reconnectTimeout = setTimeout(this.connectorToModbusServer.bind(this), this.retryInterval)
-          }
-        })
-    } else {
-      this.logger.error(`Modbus function name ${funcName} not recognized`)
-    }
-  }
-
-  /**
-   * Initiates a connection for every data source to the right host and port.
-   * @return {void}
-   */
-  async connect() {
-    await super.connect()
-    this.connectorToModbusServer()
-  }
-
-  /**
    * Close the connection
-   * @return {void}
+   * @returns {Promise<void>} - The result promise
    */
   async disconnect() {
     if (this.reconnectTimeout) {
@@ -138,28 +214,11 @@ class Modbus extends SouthHandler {
     }
     if (this.connected) {
       this.socket.end()
+      this.socket = null
       this.connected = false
+      this.client = null
     }
     await super.disconnect()
-  }
-
-  connectorToModbusServer() {
-    this.reconnectTimeout = null
-    this.socket = new net.Socket()
-    const { host, port, slaveId } = this.dataSource.Modbus
-    this.modbusClient = new jsmodbus.client.TCP(this.socket, slaveId)
-    this.socket.connect(
-      { host, port },
-      () => {
-        this.connected = true
-        this.updateStatusDataStream({ 'Connected at': new Date().toISOString() })
-      },
-    )
-    this.socket.on('error', (error) => {
-      this.logger.error(`Modbus connect error: ${JSON.stringify(error)}`)
-      this.disconnect()
-      this.reconnectTimeout = setTimeout(this.connectorToModbusServer.bind(this), this.retryInterval)
-    })
   }
 }
 

@@ -11,14 +11,6 @@ schema.form = {
     defaultValue: 'info',
     help: <div>The level for the Sqlite log</div>,
   },
-  fileName: {
-    type: 'OIbText',
-    label: 'File name of sqlite db',
-    md: 4,
-    valid: 'notEmpty',
-    defaultValue: '',
-    help: <div>The file name of the database file</div>,
-  },
   maxNumberOfLogs: {
     type: 'OIbInteger',
     newRow: false,

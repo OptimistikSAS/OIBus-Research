@@ -5,6 +5,8 @@ const ProxyAgent = require('proxy-agent')
 
 const BaseRequest = require('./BaseRequest.class')
 
+const { generateFormDataBodyFromFile } = require('../utils')
+
 class FetchRequest extends BaseRequest {
   /**
    * Send the request using node-fetch
@@ -29,7 +31,7 @@ class FetchRequest extends BaseRequest {
       const proxyOptions = url.parse(`${protocol}://${host}:${port}`)
 
       if (username && password) {
-        proxyOptions.auth = `${username}:${this.engine.encryptionService.decryptText(password)}`
+        proxyOptions.auth = `${username}:${await this.engine.encryptionService.decryptText(password)}`
       }
 
       agent = new ProxyAgent(proxyOptions)
@@ -39,7 +41,7 @@ class FetchRequest extends BaseRequest {
     if (Object.prototype.hasOwnProperty.call(headers, 'Content-Type')) {
       body = data
     } else {
-      body = this.generateFormDataBody(data)
+      body = generateFormDataBodyFromFile(data)
 
       const formHeaders = body.getHeaders()
       Object.keys(formHeaders).forEach((key) => {
