@@ -1,4 +1,4 @@
-import { MessageSecurityMode, OPCUAClient, UserTokenType } from 'node-opcua-client';
+import { MessageSecurityMode, OPCUAClient, UserTokenType, AttributeIds, NodeId, ReadValueIdOptions, NodeClass } from 'node-opcua-client';
 import { OPCUACertificateManager } from 'node-opcua-certificate-manager';
 
 import manifest from './manifest';
@@ -117,6 +117,11 @@ export default class SouthOPCUADA extends SouthConnector {
       this.logger.debug(`Connecting to OPCUA_DA on ${this.configuration.settings.url}`);
       this.session = await OPCUAClient.createSession(this.configuration.settings.url, userIdentity, options);
       this.logger.info(`OPCUA DA ${this.configuration.name} connected`);
+      /* TEST JFH */ 
+      console.log("Test Discovery");
+      // this.discover("ObjectsFolder");
+      this.discover("ns=3;s=85/0:Simulation");
+      /* FIN TEST JFH */
       await super.connect();
     } catch (error) {
       this.logger.error(`Error while connecting to the OPCUA DA server. ${error}`);
@@ -152,6 +157,78 @@ export default class SouthOPCUADA extends SouthConnector {
         }
       }));
       await this.addValues(values);
+    } catch (error) {
+      if (!this.disconnecting) {
+        await this.internalDisconnect();
+        await this.connect();
+      }
+      throw error;
+    }
+  }
+
+  async readAllAttributes(session: ClientSession, nodeId: NodeId): Promise<Record<string, string>> {
+    const attributesToRead: ReadValueIdOptions[] = [];
+
+    // Loop through all standard attribute IDs (1-22)
+    for (let attributeId = 1; attributeId <= 22; attributeId++) {
+      attributesToRead.push({
+        nodeId: nodeId,
+        attributeId: attributeId,
+      });
+    }
+
+    const attributes = await session.read(attributesToRead);
+
+    // Convert the attributes array to an object
+    const attributesObject: Record<string, string> = {};
+    for (let i = 0; i < attributes.length; i++) {
+      const attributeId = attributesToRead[i].attributeId;
+      const attributeName = AttributeIds[i];
+      attributesObject[attributeName] = attributes[i].value.value?.toString() || "";
+    }
+    return attributesObject;
+  }
+
+  async recursiveBrowse(session: ClientSession, nodeId: string): Promise<string> {
+    let csvData = "";
+    const browseDescription = {
+      nodeId,
+      referenceTypeId: "Organizes",
+      includeSubtypes: true,
+      nodeClassMask: NodeClass.Object | NodeClass.Variable
+    };
+    const browseResult = await session?.browse(browseDescription);
+    if (!browseResult?.references) {
+      this.logger.error(`Could not browse node: ${nodeId} `);
+    } else {
+      for (const reference of browseResult.references) {
+        // Read all attributes of each node
+        const attributes = await this.readAllAttributes(session, reference.nodeId);
+        // Add node details to the CSV data
+        // display a point for each node without line return
+        process.stdout.write(`.`);
+        csvData += `${reference.nodeId.toString()},${attributes.BrowseName},${attributes.DataType}\n`;
+
+        // Recursively browse child nodes
+        if (reference.nodeClass === NodeClass.Object || reference.nodeClass === NodeClass.Variable) {
+          csvData += await this.recursiveBrowse(session, reference.nodeId.toString());
+        }
+      }
+    }
+
+    return csvData;
+  }
+
+  override async discover(search: string): Promise<void> {
+    try {
+      if (this.session === null) throw new Error("Session is not connected");
+      // CSV file configuration
+      const csvFile = "opcua_data_model_all_attributes.csv";
+      // Browse the entire address space and generate CSV data
+      const csvData = "NODE_ID,BROWSE_NAME,DATA_TYPE\n" + await this.recursiveBrowse(this.session, search );
+      // Write the CSV data to a file
+      await fs.writeFile(csvFile, csvData);
+      console.log(`Data model exported to ${csvFile}`);
     } catch (error) {
       if (!this.disconnecting) {
         await this.internalDisconnect();

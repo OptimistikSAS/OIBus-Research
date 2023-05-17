@@ -42,7 +42,7 @@ import { PassThrough } from 'node:stream';
  * All other operations (cache, store&forward, communication to North connectors) will be handled by the OIBus engine
  * and should not be taken care at the South level.
  */
-export default class SouthConnector {
+export default abstract class SouthConnector {
   protected itemsByScanModeIds: Map<string, Map<string, OibusItemDTO>> = new Map<string, Map<string, OibusItemDTO>>();
   private taskJobQueue: Array<ScanModeDTO> = [];
   private cronByScanModeIds: Map<string, CronJob> = new Map<string, CronJob>();
@@ -326,7 +326,9 @@ export default class SouthConnector {
     this.logger.warn('historyQuery method must be override');
     return '';
   }
-
+  async discover(search: string): Promise<void> {
+    this.logger.warn('historyQuery method must be override');
+  }
   async fileQuery(items: Array<OibusItemDTO>): Promise<void> {
     this.logger.warn('fileQuery method must be override');
   }
